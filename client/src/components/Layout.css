@@ -1,0 +1,284 @@
+/* Layout.css */
+
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-top: 70px; /* Add this */
+}
+
+.main-area {
+  display: flex;
+  flex: 1;
+  position: relative;
+  background-color: #f8f9fa;
+}
+
+.content {
+  flex: 1;
+  padding: 20px 30px;
+  padding-top: 90px;
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 70px);
+  background-color: #f8f9fa; /* Changed to match body background */
+  margin-left: 250px;
+}
+
+/* Mobile sidebar overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content {
+    margin-left: 200px; /* Narrower sidebar on tablets */
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    padding: 15px;
+  }
+  
+  .content.sidebar-open {
+    margin-left: 0; /* Don't push content on mobile */
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 10px;
+  }
+}
+
+/* Dashboard responsive adjustments - FIXED */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* White background for dashboard boxes */
+.dashboard-box {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .dashboard-box {
+    padding: 15px;
+  }
+}
+
+/* White background for all content cards/containers */
+.inventory-items-container,
+.form-section,
+.filters-container,
+.inventory-card,
+.procurement-form,
+.modal-content {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-items-container {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.inventory-items-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .table-responsive {
+    margin-top: 15px;
+  }
+  
+  .table-responsive table {
+    font-size: 14px;
+  }
+  
+  .table-responsive th,
+  .table-responsive td {
+    padding: 6px 8px;
+    white-space: nowrap;
+  }
+}
+
+/* Page header responsive */
+.page-header {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .page-header h2 {
+    font-size: 24px;
+  }
+  
+  /* Hide or reposition the add button on mobile */
+  button[style*="position: absolute"] {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin: 10px auto;
+    display: block;
+  }
+}
+
+/* Form responsive adjustments */
+.form-section {
+  margin-bottom: 25px;
+}
+
+@media (max-width: 768px) {
+  .form-section {
+    margin-bottom: 20px;
+  }
+  
+  .fields-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .field-container {
+    width: 100% !important;
+  }
+  
+  .field-container.half-width,
+  .field-container.third-width,
+  .field-container.quarter-width {
+    width: 100% !important;
+  }
+}
+
+/* Modal responsive */
+@media (max-width: 768px) {
+  .ReactModal__Content {
+    width: 95% !important;
+    max-width: none !important;
+    margin: 10px !important;
+    padding: 15px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Filters responsive */
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: background-color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .filters-header {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  
+  .filters-header h4 {
+    font-size: 14px;
+  }
+  
+  .clear-filters-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}
+
+/* Pagination responsive */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .pagination-controls {
+    order: 2;
+  }
+  
+  .pagination-info {
+    order: 1;
+    text-align: center;
+  }
+  
+  .pagination-limit-control {
+    order: 3;
+  }
+}

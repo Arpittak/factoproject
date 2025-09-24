@@ -1,0 +1,383 @@
+/* InventoryList.css */
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  color: #374151;
+  font-size: 18px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Container */
+.inventory-table-container {
+  width: 100%;
+}
+
+/* Mobile View - Hidden by default */
+.mobile-view {
+  display: none;
+}
+
+/* Desktop View - Shown by default */
+.desktop-view {
+  display: block;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 14px;
+}
+
+.inventory-table th {
+  background: #f8f9fa;
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.inventory-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.table-row:hover {
+  background-color: #f8f9fa;
+}
+
+/* Clickable rows and cards */
+.clickable-row,
+.clickable-card {
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-card:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Stone name display (no longer a button) */
+.stone-name-display {
+  font-weight: 600;
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.clickable-card .stone-name-display {
+  font-size: 16px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Remove old stone-name-link styles and replace with display */
+.stone-name-link {
+  display: none; /* Hide old button style */
+}
+
+/* Action buttons need higher z-index to prevent row click */
+.action-buttons {
+  position: relative;
+  z-index: 2;
+}
+
+.action-btn {
+  position: relative;
+  z-index: 3;
+}
+
+/* Row click indicator */
+.clickable-row td:first-child::before,
+.clickable-card::before {
+  content: "👁️";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.clickable-row:hover td:first-child::before,
+.clickable-card:hover::before {
+  opacity: 1;
+}
+
+.clickable-card {
+  position: relative;
+}
+
+.clickable-card::before {
+  top: 20px;
+  transform: none;
+}
+
+/* Badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.calibrated {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.not-calibrated {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.stage-badge {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Quantity Column */
+.quantity {
+  min-width: 120px;
+}
+
+.quantity-primary {
+  font-weight: 600;
+  color: #212529;
+}
+
+.quantity-secondary {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid #dee2e6;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  min-width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.add-btn {
+  color: #28a745;
+  border-color: #28a745;
+}
+
+.action-btn.add-btn:hover {
+  background: #28a745;
+  color: white;
+}
+
+.action-btn.remove-btn {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.action-btn.remove-btn:hover {
+  background: #ffc107;
+  color: #212529;
+}
+
+.action-btn.delete-btn {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.action-btn.delete-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* Mobile Card View */
+.inventory-card {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.stone-info {
+  flex: 1;
+}
+
+.stone-info .stone-name-link {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stone-info .stone-type {
+  font-size: 13px;
+  margin-top: 0;
+}
+
+.card-details {
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 13px;
+}
+
+.detail-value {
+  color: #212529;
+  font-size: 13px;
+  text-align: right;
+}
+
+.quantity-info {
+  text-align: right;
+}
+
+.quantity-info strong {
+  display: block;
+  color: #212529;
+}
+
+.quantity-info small {
+  color: #6c757d;
+  font-size: 11px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
+}
+
+.card-actions .action-btn {
+  flex: 1;
+  max-width: 80px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+  
+  .mobile-view {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-card {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .detail-row {
+    padding: 4px 0;
+  }
+  
+  .detail-label,
+  .detail-value {
+    font-size: 12px;
+  }
+  
+  .stone-info .stone-name-link {
+    font-size: 15px;
+  }
+}
+
+/* Large screens - optimize table spacing */
+@media (min-width: 1200px) {
+  .inventory-table th,
+  .inventory-table td {
+    padding: 14px 12px;
+  }
+  
+  .inventory-table {
+    font-size: 14px;
+  }
+}

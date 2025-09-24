@@ -1,0 +1,62 @@
+/* Main container for all pagination controls */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Section for "Show X entries" */
+.pagination-limit-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-limit-control select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Section for "Showing X to Y of Z results" text */
+.pagination-info {
+  flex: 1;
+  text-align: center;
+  color: #555;
+}
+
+/* Section for the page number buttons */
+.pagination-controls {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.pagination-controls button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-controls button:disabled {
+  cursor: not-allowed;
+  color: #aaa;
+}
+
+.pagination-controls button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  font-weight: bold;
+}
+

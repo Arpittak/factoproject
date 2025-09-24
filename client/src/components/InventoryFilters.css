@@ -1,0 +1,52 @@
+/* --- Style for each major section (Vendor, Filters, etc.) --- */
+.form-section {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.form-section h4 {
+  margin-top: 0;
+  color: #333;
+  padding-bottom: 10px;
+}
+
+/* --- Flexbox container for a row of fields --- */
+.fields-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* --- Container for a single label + input pair --- */
+.field-container {
+  margin-bottom: 15px;
+}
+
+.field-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+/* --- General style for all inputs, selects, textareas --- */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+

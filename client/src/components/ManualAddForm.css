@@ -1,0 +1,89 @@
+/* --- Main container for the entire form --- */
+.procurement-form {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* --- Style for each major section (Vendor, GST, etc.) --- */
+.form-section {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.form-section h3, .form-section h4 {
+  margin-top: 0;
+  color: #333;
+  padding-bottom: 10px;
+}
+
+/* --- Flexbox container for a row of fields --- */
+.fields-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* --- Container for a single label + input pair --- */
+.field-container {
+  margin-bottom: 15px;
+}
+
+.field-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+/* --- Sizing for field containers --- */
+.full-width { width: 100%; }
+.half-width { width: 49%; }
+.third-width { width: 32%; }
+
+/* --- General style for all inputs, selects, textareas --- */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* --- Buttons --- */
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.form-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    margin-left: 10px;
+}
+
