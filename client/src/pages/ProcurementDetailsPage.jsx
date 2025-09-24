@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./InventoryPage.css"; // Reusing inventory page styles
-// import AddStoneForm from '../components/AddStoneForm';
+import AddStoneForm from "../components/AddStoneForm";
 
 function ProcurementDetailsPage({ procurementId, onBack }) {
   const [procurement, setProcurement] = useState(null);
@@ -826,32 +826,11 @@ function ProcurementDetailsPage({ procurementId, onBack }) {
                       </div>
 
                       <div className="detail-row">
-                        <span className="detail-label">Edges:</span>
-                        <span className="detail-value">
-                          {item.edges_type_name || "N/A"}
-                        </span>
-                      </div>
-
-                      <div className="detail-row">
-                        <span className="detail-label">Finishing:</span>
-                        <span className="detail-value">
-                          {item.finishing_type_name || "N/A"}
-                        </span>
-                      </div>
-
-                      <div className="detail-row">
                         <span className="detail-label">Calibrated:</span>
                         <span className="detail-value">
                           {item.is_calibrated ? "Yes" : "No"}
                         </span>
                       </div>
-
-                      {item.hsn_code && (
-                        <div className="detail-row">
-                          <span className="detail-label">HSN Code:</span>
-                          <span className="detail-value">{item.hsn_code}</span>
-                        </div>
-                      )}
 
                       {item.comments && (
                         <div className="detail-row">
@@ -859,6 +838,24 @@ function ProcurementDetailsPage({ procurementId, onBack }) {
                           <span className="detail-value">{item.comments}</span>
                         </div>
                       )}
+
+                      <div
+                        className="card-actions"
+                        style={{
+                          marginTop: "16px",
+                          paddingTop: "16px",
+                          borderTop: "1px solid #e9ecef",
+                        }}
+                      >
+                        <button
+                          className="action-btn delete-btn"
+                          onClick={() => setDeleteModal({ show: true, item })}
+                          title="Delete Item"
+                          style={{ width: "100%", padding: "8px 16px" }}
+                        >
+                          🗑️Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -963,7 +960,7 @@ function ProcurementDetailsPage({ procurementId, onBack }) {
         <div className="modal-overlay" onClick={() => setAddStoneModal(false)}>
           <div
             className="modal-content"
-            style={{ width: "600px", maxHeight: "90vh", overflow: "auto" }}
+            style={{ width: "800px", maxHeight: "90vh", overflow: "auto" }}
             onClick={(e) => e.stopPropagation()}
           >
             <AddStoneForm

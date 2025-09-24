@@ -489,8 +489,73 @@ exports.addProcurementItem = async (req, res) => {
       item.rate_unit, calculatedItemAmount, item.comments || null
     ]);
     
-    // Same inventory logic as createProcurement function...
-    // [Copy the inventory creation/update logic from createProcurement]
+    // ADD THIS INVENTORY LOGIC (copy from createProcurement):
+    
+    // Find or create inventory item
+    let inventoryItemId;
+    let transaction_type;
+    
+    const findSql = `
+      SELECT id FROM inventory_items 
+      WHERE stone_id = ? AND length_mm = ? AND width_mm = ? 
+      AND (thickness_mm = ? OR (thickness_mm IS NULL AND ? IS NULL))
+      AND is_calibrated = ? AND edges_type_id = ? AND finishing_type_id = ? AND stage_id = ?
+    `;
+    const [existing] = await connection.query(findSql, [
+      item.stone_id, finalLength, finalWidth, finalThickness, finalThickness,
+      item.is_calibrated, item.edges_type_id, item.finishing_type_id, item.stage_id
+    ]);
+
+    if (existing.length > 0) {
+      inventoryItemId = existing[0].id;
+      transaction_type = 'procurement_quantity_added';
+    } else {
+      const createSql = `
+        INSERT INTO inventory_items 
+        (stone_id, length_mm, width_mm, thickness_mm, is_calibrated, edges_type_id, finishing_type_id, stage_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      const [createResult] = await connection.query(createSql, [
+        item.stone_id, finalLength, finalWidth, finalThickness,
+        item.is_calibrated, item.edges_type_id, item.finishing_type_id, item.stage_id
+      ]);
+      inventoryItemId = createResult.insertId;
+      transaction_type = 'procurement_initial_stock';
+    }
+    
+    // Calculate quantities using "Sq Meter First" logic
+    let master_sq_meter;
+    if (item.units === 'Pieces') {
+      master_sq_meter = calculateSqMeterFromPieces(parseInt(item.quantity), finalLength, finalWidth);
+    } else {
+      master_sq_meter = parseFloat(item.quantity);
+    }
+
+    const change_in_pieces = calculatePiecesFromSqMeter(master_sq_meter, finalLength, finalWidth);
+    const change_in_sq_meter = master_sq_meter;
+
+    // Get current balance
+    const balanceSql = 'SELECT balance_after_pieces, balance_after_sq_meter FROM inventory_transactions WHERE inventory_item_id = ? ORDER BY id DESC LIMIT 1';
+    const [lastTx] = await connection.query(balanceSql, [inventoryItemId]);
+    const currentBalancePieces = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_pieces) : 0;
+    const currentBalanceSqMeter = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_sq_meter) : 0;
+    
+    const newBalancePieces = currentBalancePieces + change_in_pieces;
+    const newBalanceSqMeter = currentBalanceSqMeter + change_in_sq_meter;
+    
+    // Insert inventory transaction
+    const transactionSql = `
+      INSERT INTO inventory_transactions 
+      (inventory_item_id, transaction_type, change_in_sq_meter, change_in_pieces, 
+       balance_after_sq_meter, balance_after_pieces, source_details, performed_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    await connection.query(transactionSql, [
+      inventoryItemId, transaction_type, change_in_sq_meter, change_in_pieces,
+      newBalanceSqMeter, newBalancePieces, 
+      `Added to procurement: ${procRows[0].supplier_invoice}`, 'System'
+    ]);
     
     await connection.commit();
     res.status(201).json({ message: 'Procurement item added successfully' });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./AddProcurementForm.css";
+import StoneItemForm from './StoneItemForm';
 
 // Base state for a new item, with corrected defaults
 const baseItem = {
@@ -407,339 +408,30 @@ function AddProcurementForm({ onProcurementAdded, onCancel }) {
         </div>
       </div>
 
-      {items.map((item, index) => (
-        <div key={index} className="form-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h4>Stone {index + 1}</h4>
-            {items.length > 1 && (
-              <button
-                type="button"
-                className="form-button btn-remove"
-                onClick={() => handleRemoveItem(index)}
-              >
-                Remove
-              </button>
-            )}
-          </div>
-
-          <div className="stone-sub-section">
-            <h5>Stone Information</h5>
-            <div className="fields-row">
-              <div className="field-container half-width">
-                <label>Stone Type *</label>
-                <select
-                  className={`form-input ${
-                    errors[`item_${index}`]?.stone_type ? "error-input" : ""
-                  }`}
-                  name="stone_type"
-                  value={item.stone_type}
-                  onChange={(e) => handleItemChange(index, e)}
-                  
-                >
-                  <option value="">Select Stone Type</option>
-                  {stoneTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-                {errors[`item_${index}`]?.stone_type && (
-                  <ErrorMessage message={errors[`item_${index}`].stone_type} />
-                )}
-              </div>
-              <div className="field-container half-width">
-                <label>Stone Name *</label>
-                <select
-                  className={`form-input ${
-                    errors[`item_${index}`]?.stone_id ? "error-input" : ""
-                  }`}
-                  name="stone_id"
-                  value={item.stone_id}
-                  onChange={(e) => handleItemChange(index, e)}
-                  
-                  
-                >
-                  <option value="">Select Stone Name</option>
-                  {filteredStones.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.stone_name}
-                    </option>
-                  ))}
-                </select>
-                {errors[`item_${index}`]?.stone_id && (
-                  <ErrorMessage message={errors[`item_${index}`].stone_id} />
-                )}
-              </div>
-              <div className="field-container full-width">
-                <label>HSN Code *</label>
-                <select
-                  className={`form-input ${
-                    errors[`item_${index}`]?.hsn_code_id ? "error-input" : ""
-                  }`}
-                  name="hsn_code_id"
-                  value={item.hsn_code_id}
-                  onChange={(e) => handleItemChange(index, e)}
-                  
-                  
-                >
-                  <option value="">Select HSN Code</option>
-                  {hsnCodes.map((h) => (
-                    <option key={h.id} value={h.id}>
-                      {h.code}
-                    </option>
-                  ))}
-                </select>
-                {errors[`item_${index}`]?.hsn_code_id && (
-                  <ErrorMessage message={errors[`item_${index}`].hsn_code_id} />
-                )}
-              </div>
-              <div className="field-container third-width">
-                <label>Length (mm) *</label>
-                <input
-                  className={`form-input ${
-                    errors[`item_${index}`]?.length_mm ? "error-input" : ""
-                  }`}
-                  type="number"
-                  name="length_mm"
-                  value={item.length_mm}
-                  onChange={(e) => handleItemChange(index, e)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Length"
-                  min="1"
-                  step="1"
-                 
-                   
-                />
-                {errors[`item_${index}`]?.length_mm && (
-                  <ErrorMessage message={errors[`item_${index}`].length_mm} />
-                )}
-              </div>
-              <div className="field-container third-width">
-                <label>Width (mm) *</label>
-                <input
-                  className={`form-input ${
-                    errors[`item_${index}`]?.width_mm ? "error-input" : ""
-                  }`}
-                  type="number"
-                  name="width_mm"
-                  value={item.width_mm}
-                  onChange={(e) => handleItemChange(index, e)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Width"
-                  min="1"
-                  step="1"
-                 
-                   
-                />
-                {errors[`item_${index}`]?.width_mm && (
-                  <ErrorMessage message={errors[`item_${index}`].width_mm} />
-                )}
-              </div>
-              <div className="field-container third-width">
-                <label>Thickness (mm)</label>
-                <input
-                  className="form-input"
-                  type="number"
-                  name="thickness_mm"
-                  value={item.thickness_mm}
-                  onChange={(e) => handleItemChange(index, e)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Thickness"
-                  min="1"
-                  step="1"
-                />
-              </div>
-              <div className="field-container third-width">
-                <label>Stage *</label>
-                <select
-                  className="form-input"
-                  name="stage_id"
-                  value={item.stage_id}
-                  onChange={(e) => handleItemChange(index, e)}
-              
-                      
-                >
-                  {stages.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="field-container third-width">
-                <label>Edges *</label>
-                <select
-                  className="form-input"
-                  name="edges_type_id"
-                  value={item.edges_type_id}
-                  onChange={(e) => handleItemChange(index, e)}
-                 
-                   
-                >
-                  {edges.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="field-container third-width">
-                <label>Finishing *</label>
-                <select
-                  className="form-input"
-                  name="finishing_type_id"
-                  value={item.finishing_type_id}
-                  onChange={(e) => handleItemChange(index, e)}
-                 
-                  
-                >
-                  {finishes.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="field-container full-width">
-                <label style={{ display: "flex", alignItems: "center" }}>
-                  <input
-                    type="checkbox"
-                    name="is_calibrated"
-                    checked={item.is_calibrated}
-                    onChange={(e) => handleItemChange(index, e)}
-                    style={{ marginRight: "10px" }}
-                  />
-                  Calibrated
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div className="stone-sub-section">
-            <h5>Quantity & Pricing</h5>
-            <div className="fields-row">
-              <div className="field-container half-width">
-                <label>Quantity *</label>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <input
-                    className={`form-input ${
-                      errors[`item_${index}`]?.quantity ? "error-input" : ""
-                    }`}
-                    type="number"
-                    step={item.units === "Sq Meter" ? "0.0001" : "1"}
-                    name="quantity"
-                    value={item.quantity}
-                    onChange={(e) => handleItemChange(index, e)}
-                    placeholder={`Enter ${item.units.toLowerCase()}`}
-                    min="0.0001"
-                    style={{ flex: 2 }}
-                  />
-                  <select
-                    className="form-input"
-                    name="units"
-                    value={item.units}
-                    onChange={(e) => handleItemChange(index, e)}
-                    style={{ flex: 1 }}
-                  >
-                    <option value="Sq Meter">Sq Meter</option>
-                    <option value="Pieces">Pieces</option>
-                    <label>Quantity * (Primary unit: Sq Meter)</label>
-                  </select>
-                </div>
-                {errors[`item_${index}`]?.quantity && (
-                  <ErrorMessage message={errors[`item_${index}`].quantity} />
-                )}
-                {/* Show conversion */}
-                {item.length_mm && item.width_mm && item.quantity && (
-                  <small
-                    style={{
-                      color: "#666",
-                      fontSize: "12px",
-                      marginTop: "4px",
-                      display: "block",
-                    }}
-                  >
-                    {calculateEquivalent(item)}
-                  </small>
-                )}
-              </div>
-
-              <div className="field-container half-width">
-                <label>Rate (₹) *</label>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <input
-                    className={`form-input ${
-                      errors[`item_${index}`]?.rate ? "error-input" : ""
-                    }`}
-                    type="number"
-                    step="0.01"
-                    name="rate"
-                    value={item.rate}
-                    onChange={(e) => handleItemChange(index, e)}
-                    placeholder="e.g., 250"
-                    min="0.01"
-                    style={{ flex: 2 }}
-                  />
-                  <select
-                    className="form-input"
-                    name="rate_unit"
-                    value={item.rate_unit}
-                    onChange={(e) => handleItemChange(index, e)}
-                    style={{ flex: 1 }}
-                  >
-                    <option value="Pieces">Per Piece</option>
-                    <option value="Sq Meter">Per Sq Meter</option>
-                  </select>
-                </div>
-                {errors[`item_${index}`]?.rate && (
-                  <ErrorMessage message={errors[`item_${index}`].rate} />
-                )}
-              </div>
-
-              <div
-                className="field-container full-width"
-                style={{
-                  background: "#f8f9fa",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  marginTop: "10px",
-                }}
-              >
-                <strong>
-                  Item Total: ₹
-                  {(
-                    (parseFloat(item.quantity) || 0) *
-                    (parseFloat(item.rate) || 0)
-                  ).toFixed(2)}
-                </strong>
-                <br />
-                <small style={{ color: "#666" }}>
-                  {item.quantity && item.rate
-                    ? `${item.quantity} ${item.units} × ₹${item.rate} per ${item.rate_unit}`
-                    : "Enter quantity and rate to see total"}
-                </small>
-              </div>
-            </div>
-          </div>
-
-          <div className="field-container full-width">
-            <label>Comments</label>
-            <textarea
-              className="form-input"
-              name="comments"
-              value={item.comments}
-              onChange={(e) => handleItemChange(index, e)}
-              placeholder="Comments for this stone..."
-            />
-          </div>
-        </div>
-      ))}
+      
+{items.map((item, index) => (
+  <StoneItemForm
+    key={index}
+    item={item}
+    onChange={(fieldName, value) => {
+      const newItems = [...items];
+      newItems[index][fieldName] = value;
+      
+      if (fieldName === 'quantity' || fieldName === 'rate') {
+        const qty = fieldName === 'quantity' ? parseFloat(value) || 0 : parseFloat(item.quantity) || 0;
+        const rate = fieldName === 'rate' ? parseFloat(value) || 0 : parseFloat(item.rate) || 0;
+        newItems[index].item_amount = qty * rate;
+      }
+      
+      setItems(newItems);
+    }}
+    errors={errors[`item_${index}`] || {}}
+    clearError={clearError}
+    showRemove={items.length > 1}
+    onRemove={() => handleRemoveItem(index)}
+    index={index}
+  />
+))}
 
       <div className="add-stone-container">
         <button

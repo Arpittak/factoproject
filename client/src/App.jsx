@@ -1,19 +1,27 @@
-  import React, { useState } from 'react';
-  import Layout from './components/Layout';
-  import VendorsPage from './pages/VendorsPage';
-  import InventoryPage from './pages/InventoryPage';
-  import ProcurementPage from './pages/ProcurementPage'; // <-- IMPORT THE NEW PAGE
+import React, { useState, useEffect } from 'react';
+import Layout from './components/Layout';
+import VendorsPage from './pages/VendorsPage';
+import InventoryPage from './pages/InventoryPage';
+import ProcurementPage from './pages/ProcurementPage';
 
-  function App() {
-    const [view, setView] = useState('inventory');
+function App() {
+  // Get initial view from localStorage or default to 'inventory'
+  const [view, setView] = useState(() => {
+    return localStorage.getItem('currentView') || 'inventory';
+  });
 
-    return (
-      <Layout setView={setView} currentView={view}>
-        {view === 'vendors' && <VendorsPage />}
-        {view === 'inventory' && <InventoryPage />}
-        {view === 'procurement' && <ProcurementPage />} {/* <-- RENDER THE NEW PAGE */}
-      </Layout>
-    );
-  }
+  // Save view to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('currentView', view);
+  }, [view]);
 
-  export default App;
+  return (
+    <Layout setView={setView} currentView={view}>
+      {view === 'vendors' && <VendorsPage />}
+      {view === 'inventory' && <InventoryPage />}
+      {view === 'procurement' && <ProcurementPage />}
+    </Layout>
+  );
+}
+
+export default App;
