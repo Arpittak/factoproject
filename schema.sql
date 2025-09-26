@@ -1,4 +1,3 @@
-USE factodb;
 DROP TABLE IF EXISTS vendors;
 CREATE TABLE vendors (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -87,18 +86,13 @@ CREATE TABLE inventory_transactions (
     ) NOT NULL,
     change_in_pieces INT NOT NULL COMMENT 'Derived from sq_meter, always integer',
     change_in_sq_meter DECIMAL(10, 4) NOT NULL COMMENT 'Primary unit - square meters',
-    balance_after_pieces INT NOT NULL COMMENT 'Derived balance in pieces';
+    balance_after_pieces INT NOT NULL COMMENT 'Derived balance in pieces',
     balance_after_sq_meter DECIMAL(10, 4) NOT NULL COMMENT 'Primary balance in sq_meter',
     source_details VARCHAR(255),
     performed_by VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id) ON DELETE CASCADE
 );
-ALTER TABLE inventory_transactions 
-MODIFY COLUMN ,
-MODIFY 
-MODIFY 
-MODIFY 
 
 
 
@@ -137,10 +131,10 @@ CREATE TABLE procurement_items (
     finishing_type_id INT,
     stage_id INT,
     
-    quantity DECIMAL(10, 4) NOT NULL COMMENT 'Always in square meters',
+    quantity DECIMAL(10, 2) NOT NULL COMMENT 'Always in square meters',
     units ENUM('Sq Meter') NOT NULL DEFAULT 'Sq Meter' COMMENT 'Only sq meter allowed',
-   rate_unit ENUM('Pieces', 'Sq Meter') NOT NULL COMMENT 'Rate can be per piece or per sq meter';
-    rate_unit ENUM('Pieces', 'Sq Meter') NOT NULL,
+    rate_unit ENUM('Pieces', 'Sq Meter') NOT NULL COMMENT 'Rate can be per piece or per sq meter',
+    rate DECIMAL(10, 2) NOT NULL,
     item_amount DECIMAL(12, 2) NOT NULL,
     comments TEXT,
 
