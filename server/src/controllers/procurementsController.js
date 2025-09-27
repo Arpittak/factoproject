@@ -14,10 +14,10 @@ const calculateSqMeterFromPieces = (pieces, length_mm, width_mm) => {
 
 exports.getAllProcurements = async (req, res) => {
   try {
-    const { 
-        vendor_id, supplier_invoice, date_received, 
-        stone_type, stone_name, stage_id,
-        page = 1, limit = 10 
+    const {
+      vendor_id, supplier_invoice, date_received,
+      stone_type, stone_name, stage_id,
+      page = 1, limit = 10
     } = req.query;
     const offset = (page - 1) * limit;
 
@@ -31,15 +31,15 @@ exports.getAllProcurements = async (req, res) => {
 
     // Advanced Filters for items within the procurement
     if (stone_type || stone_name || stage_id) {
-        let subQuery = "SELECT 1 FROM procurement_items pi JOIN stones s ON pi.stone_id = s.id WHERE pi.procurement_id = p.id";
-        if (stone_type) { subQuery += " AND s.stone_type = ?"; params.push(stone_type); }
-        if (stone_name) { subQuery += " AND s.stone_name LIKE ?"; params.push(`%${stone_name}%`); }
-        
-        if (stage_id) { 
-          subQuery += " AND pi.stage_id = ?"; 
-          params.push(stage_id); 
-        }
-        whereClauses.push(`EXISTS (${subQuery})`);
+      let subQuery = "SELECT 1 FROM procurement_items pi JOIN stones s ON pi.stone_id = s.id WHERE pi.procurement_id = p.id";
+      if (stone_type) { subQuery += " AND s.stone_type = ?"; params.push(stone_type); }
+      if (stone_name) { subQuery += " AND s.stone_name LIKE ?"; params.push(`%${stone_name}%`); }
+
+      if (stage_id) {
+        subQuery += " AND pi.stage_id = ?";
+        params.push(stage_id);
+      }
+      whereClauses.push(`EXISTS (${subQuery})`);
     }
 
     const whereString = `WHERE ${whereClauses.join(' AND ')}`;
@@ -47,7 +47,7 @@ exports.getAllProcurements = async (req, res) => {
     const countSql = `SELECT COUNT(*) as total FROM procurements p ${whereString}`;
     const [countRows] = await db.query(countSql, params);
     const totalItems = countRows[0].total;
-    
+
     const dataSql = `
       SELECT p.*, v.company_name as vendor_name,
         (SELECT COUNT(*) FROM procurement_items pi WHERE pi.procurement_id = p.id) AS total_items
@@ -72,24 +72,24 @@ exports.getAllProcurements = async (req, res) => {
 exports.createProcurement = async (req, res) => {
   const connection = await db.getConnection();
   try {
-    const { 
-      vendor_id, 
-      invoice_date, 
-      supplier_invoice, 
-      vehicle_number, 
-      grand_total, 
-      gst_type, 
-      tax_percentage, 
+    const {
+      vendor_id,
+      invoice_date,
+      supplier_invoice,
+      vehicle_number,
+      grand_total,
+      gst_type,
+      tax_percentage,
       additional_taxable_amount,
-      freight_charges, 
+      freight_charges,
       comments,
-      items 
+      items
     } = req.body;
 
     const validGstTypes = ['IGST', 'CGST', 'SGST'];
     if (gst_type && !validGstTypes.includes(gst_type)) {
-      return res.status(400).json({ 
-        message: 'Invalid GST type. Must be one of: IGST, CGST, SGST' 
+      return res.status(400).json({
+        message: 'Invalid GST type. Must be one of: IGST, CGST, SGST'
       });
     }
 
@@ -112,14 +112,14 @@ exports.createProcurement = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const [procResult] = await connection.query(procurementSql, [
-      vendor_id, 
-      invoice_date, 
-      supplier_invoice, 
-      vehicle_number || null, 
-      grand_total, 
-      gst_type || 'IGST', 
-      tax_percentage || 0, 
-      freight_charges || 0, 
+      vendor_id,
+      invoice_date,
+      supplier_invoice,
+      vehicle_number || null,
+      grand_total,
+      gst_type || 'IGST',
+      tax_percentage || 0,
+      freight_charges || 0,
       additional_taxable_amount || 0,
       comments || null
     ]);
@@ -143,7 +143,7 @@ exports.createProcurement = async (req, res) => {
       // Find or create inventory item with source = 'procurement'
       let inventoryItemId;
       let transaction_type;
-      
+
       const findSql = `
         SELECT id FROM inventory_items 
         WHERE stone_id = ? AND length_mm = ? AND width_mm = ? 
@@ -152,7 +152,7 @@ exports.createProcurement = async (req, res) => {
         AND source = 'procurement'
       `;
       const [existing] = await connection.query(findSql, [
-        item.stone_id, finalLength, finalWidth, finalThickness, finalThickness, 
+        item.stone_id, finalLength, finalWidth, finalThickness, finalThickness,
         item.is_calibrated, item.edges_type_id, item.finishing_type_id, item.stage_id
       ]);
 
@@ -166,7 +166,7 @@ exports.createProcurement = async (req, res) => {
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'procurement')
         `;
         const [createResult] = await connection.query(createSql, [
-          item.stone_id, finalLength, finalWidth, finalThickness, 
+          item.stone_id, finalLength, finalWidth, finalThickness,
           item.is_calibrated, item.edges_type_id, item.finishing_type_id, item.stage_id
         ]);
         inventoryItemId = createResult.insertId;
@@ -174,34 +174,35 @@ exports.createProcurement = async (req, res) => {
       }
 
       // Insert procurement item record WITH inventory_item_id link
+      // Add created_at to the INSERT statement
       const procItemSql = `
-        INSERT INTO procurement_items 
-        (procurement_id, stone_id, hsn_code_id, length_mm, width_mm, thickness_mm, 
-         is_calibrated, edges_type_id, finishing_type_id, stage_id,
-         quantity, units, rate, rate_unit, item_amount, comments, inventory_item_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      
+  INSERT INTO procurement_items 
+  (procurement_id, stone_id, hsn_code_id, length_mm, width_mm, thickness_mm, 
+   is_calibrated, edges_type_id, finishing_type_id, stage_id,
+   quantity, units, rate, rate_unit, item_amount, comments, inventory_item_id, created_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+`;
+
       await connection.query(procItemSql, [
-        procurementId, 
-        item.stone_id, 
-        item.hsn_code_id || null, 
-        finalLength, 
-        finalWidth, 
+        procurementId,
+        item.stone_id,
+        item.hsn_code_id || null,
+        finalLength,
+        finalWidth,
         finalThickness,
-        item.is_calibrated || false, 
-        item.edges_type_id || null, 
-        item.finishing_type_id || null, 
+        item.is_calibrated || false,
+        item.edges_type_id || null,
+        item.finishing_type_id || null,
         item.stage_id || null,
-        parseFloat(item.quantity), 
-        item.units, 
-        parseFloat(item.rate), 
-        item.rate_unit, 
+        parseFloat(item.quantity),
+        item.units,
+        parseFloat(item.rate),
+        item.rate_unit,
         calculatedItemAmount,
         item.comments || null,
         inventoryItemId  // LINK TO INVENTORY
       ]);
-      
+
       // Calculate quantities using corrected logic
       let master_sq_meter;
       let change_in_pieces;
@@ -222,10 +223,10 @@ exports.createProcurement = async (req, res) => {
       const [lastTx] = await connection.query(balanceSql, [inventoryItemId]);
       const currentBalancePieces = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_pieces) : 0;
       const currentBalanceSqMeter = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_sq_meter) : 0;
-      
+
       const newBalancePieces = currentBalancePieces + change_in_pieces;
       const newBalanceSqMeter = currentBalanceSqMeter + change_in_sq_meter;
-      
+
       // Insert inventory transaction
       const transactionSql = `
         INSERT INTO inventory_transactions 
@@ -233,7 +234,7 @@ exports.createProcurement = async (req, res) => {
          balance_after_sq_meter, balance_after_pieces, source_details, performed_by)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
-      
+
       await connection.query(transactionSql, [
         inventoryItemId,
         transaction_type,
@@ -299,9 +300,9 @@ exports.getProcurementById = async (req, res) => {
       JOIN vendors v ON p.vendor_id = v.id
       WHERE p.id = ?
     `;
-    
+
     const [procurementRows] = await db.query(procurementSql, [id]);
-    
+
     if (procurementRows.length === 0) {
       return res.status(404).json({ message: 'Procurement not found' });
     }
@@ -327,25 +328,25 @@ exports.getProcurementById = async (req, res) => {
   WHERE pi.procurement_id = ?
   ORDER BY pi.id
 `;
-    
+
     const [items] = await db.query(itemsSql, [id]);
 
     // Calculate summary data
     // CHANGE TO (CORRECT):
-const currentItemsAmount = items.reduce((sum, item) => sum + parseFloat(item.item_amount), 0);
+    const currentItemsAmount = items.reduce((sum, item) => sum + parseFloat(item.item_amount), 0);
 
-res.status(200).json({
-  procurement,
-  items,
-  summary: {
-    totalItems: items.length,
-    // Use original stored values, not recalculated ones
-    totalProcurementAmount: parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0),
-    taxAmount: ((parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0)) * parseFloat(procurement.tax_percentage)) / 100,
-    grandTotal: parseFloat(procurement.grand_total), // Always use original
-    currentItemsTotal: currentItemsAmount // Optional: show current items total separately
-  }
-});
+    res.status(200).json({
+      procurement,
+      items,
+      summary: {
+        totalItems: items.length,
+        // Use original stored values, not recalculated ones
+        totalProcurementAmount: parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0),
+        taxAmount: ((parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0)) * parseFloat(procurement.tax_percentage)) / 100,
+        grandTotal: parseFloat(procurement.grand_total), // Always use original
+        currentItemsTotal: currentItemsAmount // Optional: show current items total separately
+      }
+    });
 
   } catch (error) {
     console.error('Error fetching procurement details:', error);
@@ -359,9 +360,9 @@ exports.deleteProcurementItem = async (req, res) => {
   const connection = await db.getConnection();
   try {
     const { procurementItemId } = req.params;
-    
+
     await connection.beginTransaction();
-    
+
     // Get procurement item details with inventory_item_id
     const itemSql = `
       SELECT pi.*, p.supplier_invoice 
@@ -370,24 +371,24 @@ exports.deleteProcurementItem = async (req, res) => {
       WHERE pi.id = ?
     `;
     const [itemRows] = await connection.query(itemSql, [procurementItemId]);
-    
+
     if (itemRows.length === 0) {
       return res.status(404).json({ message: 'Procurement item not found' });
     }
-    
+
     const item = itemRows[0];
-    
+
     // Check if inventory_item_id exists and inventory item still exists
     if (item.inventory_item_id) {
       const [inventoryCheck] = await connection.query(
-        'SELECT id FROM inventory_items WHERE id = ?', 
+        'SELECT id FROM inventory_items WHERE id = ?',
         [item.inventory_item_id]
       );
-      
+
       if (inventoryCheck.length > 0) {
         // Inventory item exists, so reduce its quantity
         const inventoryItemId = item.inventory_item_id;
-        
+
         // Calculate reduction amounts (same logic as procurement creation but negative)
         let master_sq_meter;
         if (item.units === 'Pieces') {
@@ -395,19 +396,19 @@ exports.deleteProcurementItem = async (req, res) => {
         } else {
           master_sq_meter = parseFloat(item.quantity);
         }
-        
+
         const change_in_pieces = -calculatePiecesFromSqMeter(master_sq_meter, item.length_mm, item.width_mm);
         const change_in_sq_meter = -master_sq_meter;
-        
+
         // Get current balance
         const balanceSql = 'SELECT balance_after_pieces, balance_after_sq_meter FROM inventory_transactions WHERE inventory_item_id = ? ORDER BY id DESC LIMIT 1';
         const [lastTx] = await connection.query(balanceSql, [inventoryItemId]);
         const currentBalancePieces = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_pieces) : 0;
         const currentBalanceSqMeter = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_sq_meter) : 0;
-        
+
         const newBalancePieces = currentBalancePieces + change_in_pieces;
         const newBalanceSqMeter = currentBalanceSqMeter + change_in_sq_meter;
-        
+
         // Check if removing this item would result in zero or negative balance
         if (newBalancePieces <= 0 || newBalanceSqMeter <= 0) {
           // Check if this is the only procurement item linked to this inventory item
@@ -415,7 +416,7 @@ exports.deleteProcurementItem = async (req, res) => {
             'SELECT COUNT(*) as count FROM procurement_items WHERE inventory_item_id = ? AND id != ?',
             [inventoryItemId, procurementItemId]
           );
-          
+
           if (linkedItemsCount[0].count === 0) {
             // This is the only procurement item linked, delete entire inventory item
             await connection.query('DELETE FROM inventory_items WHERE id = ?', [inventoryItemId]);
@@ -429,7 +430,7 @@ exports.deleteProcurementItem = async (req, res) => {
             `;
             await connection.query(transactionSql, [
               inventoryItemId, 'procurement_item_deleted', change_in_sq_meter, change_in_pieces,
-              newBalanceSqMeter, newBalancePieces, 
+              newBalanceSqMeter, newBalancePieces,
               `Deleted from procurement: ${item.supplier_invoice}`, 'System'
             ]);
           }
@@ -443,7 +444,7 @@ exports.deleteProcurementItem = async (req, res) => {
           `;
           await connection.query(transactionSql, [
             inventoryItemId, 'procurement_item_deleted', change_in_sq_meter, change_in_pieces,
-            newBalanceSqMeter, newBalancePieces, 
+            newBalanceSqMeter, newBalancePieces,
             `Deleted from procurement: ${item.supplier_invoice}`, 'System'
           ]);
         }
@@ -451,13 +452,13 @@ exports.deleteProcurementItem = async (req, res) => {
       // If inventory item doesn't exist (was deleted), we just delete procurement item
     }
     // If no inventory_item_id, we just delete procurement item
-    
+
     // Delete procurement item
     await connection.query('DELETE FROM procurement_items WHERE id = ?', [procurementItemId]);
-    
+
     await connection.commit();
     res.status(200).json({ message: 'Procurement item deleted successfully' });
-    
+
   } catch (error) {
     await connection.rollback();
     console.error('Error deleting procurement item:', error);
@@ -474,29 +475,29 @@ exports.addProcurementItem = async (req, res) => {
   try {
     const { procurementId } = req.params;
     const item = req.body;
-    
+
     await connection.beginTransaction();
-    
+
     // Get procurement info
     const procSql = 'SELECT supplier_invoice FROM procurements WHERE id = ?';
     const [procRows] = await connection.query(procSql, [procurementId]);
-    
+
     if (procRows.length === 0) {
       return res.status(404).json({ message: 'Procurement not found' });
     }
-    
+
     // Sanitize dimensions
     const finalLength = Math.floor(parseFloat(item.length_mm));
     const finalWidth = Math.floor(parseFloat(item.width_mm));
     const finalThickness = item.thickness_mm ? Math.floor(parseFloat(item.thickness_mm)) : null;
-    
+
     // Calculate item amount
     const calculatedItemAmount = parseFloat(item.quantity) * parseFloat(item.rate);
-    
+
     // Find or create inventory item with source = 'procurement'
     let inventoryItemId;
     let transaction_type;
-    
+
     const findSql = `
       SELECT id FROM inventory_items 
       WHERE stone_id = ? AND length_mm = ? AND width_mm = ? 
@@ -525,16 +526,15 @@ exports.addProcurementItem = async (req, res) => {
       inventoryItemId = createResult.insertId;
       transaction_type = 'procurement_initial_stock';
     }
-    
-    // Insert procurement item WITH inventory_item_id link
+
     const procItemSql = `
-      INSERT INTO procurement_items 
-      (procurement_id, stone_id, hsn_code_id, length_mm, width_mm, thickness_mm, 
-       is_calibrated, edges_type_id, finishing_type_id, stage_id,
-       quantity, units, rate, rate_unit, item_amount, comments, inventory_item_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    
+  INSERT INTO procurement_items 
+  (procurement_id, stone_id, hsn_code_id, length_mm, width_mm, thickness_mm, 
+   is_calibrated, edges_type_id, finishing_type_id, stage_id,
+   quantity, units, rate, rate_unit, item_amount, comments, inventory_item_id, created_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+`;
+
     await connection.query(procItemSql, [
       procurementId, item.stone_id, item.hsn_code_id || null,
       finalLength, finalWidth, finalThickness,
@@ -544,7 +544,7 @@ exports.addProcurementItem = async (req, res) => {
       item.rate_unit, calculatedItemAmount, item.comments || null,
       inventoryItemId  // LINK TO INVENTORY
     ]);
-    
+
     // Calculate quantities using "Sq Meter First" logic
     let master_sq_meter;
     if (item.units === 'Pieces') {
@@ -561,10 +561,10 @@ exports.addProcurementItem = async (req, res) => {
     const [lastTx] = await connection.query(balanceSql, [inventoryItemId]);
     const currentBalancePieces = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_pieces) : 0;
     const currentBalanceSqMeter = lastTx.length > 0 ? parseFloat(lastTx[0].balance_after_sq_meter) : 0;
-    
+
     const newBalancePieces = currentBalancePieces + change_in_pieces;
     const newBalanceSqMeter = currentBalanceSqMeter + change_in_sq_meter;
-    
+
     // Insert inventory transaction
     const transactionSql = `
       INSERT INTO inventory_transactions 
@@ -572,16 +572,16 @@ exports.addProcurementItem = async (req, res) => {
        balance_after_sq_meter, balance_after_pieces, source_details, performed_by)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    
+
     await connection.query(transactionSql, [
       inventoryItemId, transaction_type, change_in_sq_meter, change_in_pieces,
-      newBalanceSqMeter, newBalancePieces, 
+      newBalanceSqMeter, newBalancePieces,
       `Added to procurement: ${procRows[0].supplier_invoice}`, 'System'
     ]);
-    
+
     await connection.commit();
     res.status(201).json({ message: 'Procurement item added successfully' });
-    
+
   } catch (error) {
     await connection.rollback();
     console.error('Error adding procurement item:', error);
