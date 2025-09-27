@@ -16,7 +16,7 @@ const calculateSqMeterFromPieces = (pieces, length_mm, width_mm) => {
 // @desc    Get all inventory items with their calculated quantities
 exports.getAllInventoryItems = async (req, res) => {
   try {
-    const { stone_type, stone_name, stage_id, edges_type_id, finishing_type_id, page = 1, limit = 10 } = req.query;
+    const { stone_type, stone_name, stage_id, edges_type_id, finishing_type_id, source, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
     let whereClauses = [];
@@ -42,6 +42,10 @@ exports.getAllInventoryItems = async (req, res) => {
       whereClauses.push("ii.finishing_type_id = ?");
       params.push(finishing_type_id);
     }
+    if (source) {
+      whereClauses.push("ii.source = ?");
+      params.push(source);
+    }
 
     const whereString = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
@@ -52,7 +56,7 @@ exports.getAllInventoryItems = async (req, res) => {
 
     const dataSql = `
       SELECT
-        ii.id, ii.length_mm, ii.width_mm, ii.thickness_mm, ii.is_calibrated,
+        ii.id, ii.length_mm, ii.width_mm, ii.thickness_mm, ii.is_calibrated, ii.source,
         s.stone_name, s.stone_type,
         st.name AS stage, et.name AS edges_type, ft.name AS finishing_type,
         COALESCE((SELECT SUM(it.change_in_pieces) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id), 0) AS quantity_pieces,
@@ -87,6 +91,7 @@ exports.getAllInventoryItems = async (req, res) => {
 };
 
 // @desc    Create a new inventory item from the manual add form
+// @desc    Create a new inventory item from the manual add form
 exports.manualAddTransaction = async (req, res) => {
   const connection = await db.getConnection();
   try {
@@ -102,13 +107,14 @@ exports.manualAddTransaction = async (req, res) => {
 
     await connection.beginTransaction();
 
-    // Find or create inventory item
+    // Find or create inventory item with source = 'manual'
     let inventoryItemId;
     const findSql = `
       SELECT id FROM inventory_items 
       WHERE stone_id = ? AND length_mm = ? AND width_mm = ? 
       AND (thickness_mm = ? OR (thickness_mm IS NULL AND ? IS NULL))
       AND is_calibrated = ? AND edges_type_id = ? AND finishing_type_id = ? AND stage_id = ?
+      AND source = 'manual'
     `;
     const [existingItems] = await connection.query(findSql, [
       stone_id, finalLength, finalWidth, finalThickness, finalThickness,
@@ -119,8 +125,8 @@ exports.manualAddTransaction = async (req, res) => {
       inventoryItemId = existingItems[0].id;
     } else {
       const createSql = `
-        INSERT INTO inventory_items (stone_id, length_mm, width_mm, thickness_mm, is_calibrated, edges_type_id, finishing_type_id, stage_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO inventory_items (stone_id, length_mm, width_mm, thickness_mm, is_calibrated, edges_type_id, finishing_type_id, stage_id, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'manual')
       `;
       const [createResult] = await connection.query(createSql, [
         stone_id, finalLength, finalWidth, finalThickness, is_calibrated, edges_type_id, finishing_type_id, stage_id
@@ -128,7 +134,7 @@ exports.manualAddTransaction = async (req, res) => {
       inventoryItemId = createResult.insertId;
     }
 
-    // MAIN CHANGE: Handle both input types but store sq_meter as master
+    // Handle both input types but store sq_meter as master
     let master_sq_meter;
     if (unit === 'Pieces') {
       const inputPieces = parseInt(quantity);
@@ -182,15 +188,19 @@ exports.manualAddTransaction = async (req, res) => {
 };
 
 // @desc    Adjust quantity of an existing inventory item
+// @desc    Adjust quantity of an existing inventory item
+// @desc    Adjust quantity of an existing inventory item
 exports.manualAdjustTransaction = async (req, res) => {
   const connection = await db.getConnection();
   try {
     const { inventory_item_id, quantity, unit, reason } = req.body;
     await connection.beginTransaction();
 
+    // Get inventory item details - REMOVED source check
     const itemSql = 'SELECT length_mm, width_mm FROM inventory_items WHERE id = ?';
     const [items] = await connection.query(itemSql, [inventory_item_id]);
     if (items.length === 0) throw new Error('Item not found');
+    
     const { length_mm, width_mm } = items[0];
 
     // Get current balance

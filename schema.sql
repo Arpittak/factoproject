@@ -60,6 +60,7 @@ CREATE TABLE inventory_items (
     edges_type_id INT,
     finishing_type_id INT,
     stage_id INT,
+    source ENUM('procurement', 'manual') NOT NULL,
     comments TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -67,8 +68,9 @@ CREATE TABLE inventory_items (
     FOREIGN KEY (edges_type_id) REFERENCES edges_types(id),
     FOREIGN KEY (finishing_type_id) REFERENCES finishing_types(id),
     FOREIGN KEY (stage_id) REFERENCES stages(id),
-    UNIQUE KEY unique_stock_item (stone_id, length_mm, width_mm, thickness_mm, is_calibrated, edges_type_id, finishing_type_id, stage_id)
+    UNIQUE KEY unique_stock_item (stone_id, length_mm, width_mm, thickness_mm, is_calibrated, edges_type_id, finishing_type_id, stage_id, source)
 );
+
 
 
 
@@ -124,7 +126,7 @@ CREATE TABLE procurement_items (
     procurement_id INT NOT NULL,
     stone_id INT NOT NULL,
     hsn_code_id INT,
-    
+    inventory_item_id INT,  
 
     length_mm INT NOT NULL,
     width_mm INT NOT NULL,
@@ -134,9 +136,9 @@ CREATE TABLE procurement_items (
     finishing_type_id INT,
     stage_id INT,
     
-    quantity DECIMAL(10, 2) NOT NULL COMMENT 'Always in square meters',
-    units ENUM('Sq Meter') NOT NULL DEFAULT 'Sq Meter' COMMENT 'Only sq meter allowed',
-    rate_unit ENUM('Pieces', 'Sq Meter') NOT NULL COMMENT 'Rate can be per piece or per sq meter',
+    quantity DECIMAL(10, 2) NOT NULL,
+    units ENUM('Sq Meter') NOT NULL DEFAULT 'Sq Meter',
+    rate_unit ENUM('Pieces', 'Sq Meter') NOT NULL,
     rate DECIMAL(10, 2) NOT NULL,
     item_amount DECIMAL(12, 2) NOT NULL,
     comments TEXT,
@@ -146,9 +148,9 @@ CREATE TABLE procurement_items (
     FOREIGN KEY (hsn_code_id) REFERENCES hsn_codes(id),
     FOREIGN KEY (stage_id) REFERENCES stages(id),
     FOREIGN KEY (edges_type_id) REFERENCES edges_types(id),
-    FOREIGN KEY (finishing_type_id) REFERENCES finishing_types(id)
+    FOREIGN KEY (finishing_type_id) REFERENCES finishing_types(id),
+    FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id) ON DELETE SET NULL  -- Changed to SET NULL
 );
-
 
 
 

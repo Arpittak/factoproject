@@ -88,23 +88,37 @@ function InventoryPage() {
   // Check if any filters are active
   const hasActiveFilters = Object.values(filters).some(value => value !== '');
 
-  const handleAdjustSubmit = async (quantity, unit, reason) => {
-    const inputQuantity = parseFloat(quantity);
-    const finalQuantity = adjustmentAction === 'add' ? inputQuantity : -inputQuantity;
-    
-    try {
-      await axios.post('/api/inventory/manual-adjust', { 
-        inventory_item_id: itemToAdjust.id, 
-        quantity: finalQuantity,
-        unit, 
-        reason 
-      });
-      closeAdjustModal();
-      fetchItems();
-    } catch (err) { 
-      alert(err.response?.data?.message || 'Failed to adjust quantity.'); 
-    }
+ const handleAdjustSubmit = async (quantity, unit, reason) => {
+  const inputQuantity = parseFloat(quantity);
+  const finalQuantity = adjustmentAction === 'add' ? inputQuantity : -inputQuantity;
+  
+  const payload = { 
+    inventory_item_id: itemToAdjust.id, 
+    quantity: finalQuantity,
+    unit, 
+    reason 
   };
+  
+  try {
+    const response = await fetch('/api/inventory/manual-adjust', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to adjust quantity');
+    }
+    
+    closeAdjustModal();
+    fetchItems();
+  } catch (err) { 
+    alert(err.message || 'Failed to adjust quantity.'); 
+  }
+};
 
   const handleDelete = async (item) => {
     if (window.confirm(`PERMANENTLY DELETE "${item.stone_name}" and all its history? This cannot be undone.`)) {
