@@ -1,0 +1,84 @@
+.vendors-table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.vendors-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.vendors-table th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-size: 14px;
+}
+
+.vendors-table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+    color: #495057;
+}
+
+.vendor-row:hover {
+    background-color: #f8f9fa;
+}
+
+.vendor-row:last-child td {
+    border-bottom: none;
+}
+
+.company-name {
+    color: #212529;
+    font-weight: 600;
+}
+
+.gst-badge {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    background: white;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.no-results p {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .vendors-table {
+        font-size: 12px;
+    }
+
+    .vendors-table th,
+    .vendors-table td {
+        padding: 8px 6px;
+    }
+
+    .company-name {
+        font-size: 13px;
+    }
+}

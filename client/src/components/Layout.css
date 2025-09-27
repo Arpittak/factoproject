@@ -19,7 +19,7 @@
 .content {
   flex: 1;
   padding: 20px 30px;
-  padding-top: 90px;
+  padding-top: 30px;
   transition: margin-left 0.3s ease;
   min-height: calc(100vh - 70px);
   background-color: #f8f9fa; /* Changed to match body background */

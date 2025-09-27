@@ -63,6 +63,11 @@ function InventoryPage() {
     fetchAnalytics();
   }, []);
 
+  useEffect(() => {
+  setView('list');  // Reset to list view when navigating to inventory page
+  setSelectedItemId(null);
+}, []); // Empty dependency array means this runs once when component mounts
+
   const handleFilterChange = (newFilters) => { setCurrentPage(1); setFilters(newFilters); };
   const handlePageChange = (newPage) => { setCurrentPage(newPage); };
   const handleLimitChange = (newLimit) => { setCurrentPage(1); setLimit(newLimit); };

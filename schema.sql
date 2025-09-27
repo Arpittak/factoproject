@@ -1,15 +1,16 @@
+
 DROP TABLE IF EXISTS vendors;
 CREATE TABLE vendors (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    contact_person VARCHAR(255) NOT NULL,
+    company_name VARCHAR(255) NOT NULL UNIQUE,
+    contact_person VARCHAR(255),
     phone_number VARCHAR(20),
     email_address VARCHAR(255),
     city VARCHAR(100),
     state VARCHAR(100),
     state_code VARCHAR(10),
     complete_address TEXT,
-    gst_number VARCHAR(15),
+    gst_number VARCHAR(15) UNIQUE,
     bank_details TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -84,15 +85,17 @@ CREATE TABLE inventory_transactions (
         'wastage',
         'procurement_item_deleted'
     ) NOT NULL,
-    change_in_pieces INT NOT NULL COMMENT 'Derived from sq_meter, always integer',
-    change_in_sq_meter DECIMAL(10, 4) NOT NULL COMMENT 'Primary unit - square meters',
-    balance_after_pieces INT NOT NULL COMMENT 'Derived balance in pieces',
-    balance_after_sq_meter DECIMAL(10, 4) NOT NULL COMMENT 'Primary balance in sq_meter',
+    change_in_pieces INT NOT NULL,
+    change_in_sq_meter DECIMAL(10, 4) NOT NULL,
+    balance_after_pieces INT NOT NULL,
+    balance_after_sq_meter DECIMAL(10, 4) NOT NULL,
+    reason TEXT,
     source_details VARCHAR(255),
     performed_by VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id) ON DELETE CASCADE
 );
+
 
 
 

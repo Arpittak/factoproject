@@ -1,35 +1,51 @@
-import React from 'react';
+import React from "react";
+import './VendorList.css';
 
 function VendorList({ vendors }) {
   if (!vendors || vendors.length === 0) {
-    return <p>No vendors found.</p>;
+    return (
+      <div className="no-results">
+        <p>No vendors found matching the current filters.</p>
+      </div>
+    );
   }
 
-  const thStyle = { padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' };
-  const tdStyle = { padding: '10px', borderBottom: '1px solid #ddd' };
-
   return (
-    <div>
-      <h2>Vendors</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="vendors-table-container">
+      <table className="vendors-table">
         <thead>
           <tr>
-            <th style={thStyle}>Company Name</th>
-            <th style={thStyle}>Contact Person</th>
-            <th style={thStyle}>Email</th>
-            <th style={thStyle}>City</th>
-            <th style={thStyle}>State</th>
-            <th style={thStyle}>GST Number</th>
+            <th>Company Name</th>
+            <th>Contact Person</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>State</th>
+            <th>GST</th>
           </tr>
         </thead>
-        <tbody>{vendors.map((vendor) => (
-            <tr key={vendor.id}>
-              <td style={tdStyle}>{vendor.company_name}</td>
-              <td style={tdStyle}>{vendor.contact_person}</td>
-              <td style={tdStyle}>{vendor.email_address}</td>
-              <td style={tdStyle}>{vendor.city}</td>
-              <td style={tdStyle}>{vendor.state}</td>
-              <td style={tdStyle}>{vendor.gst_number}</td>
+        <tbody>
+          {vendors.map((vendor) => (
+            <tr key={vendor.id} className="vendor-row">
+              <td className="company-cell">
+                <div className="company-info">
+                  <strong className="company-name">
+                    {vendor.company_name}
+                  </strong>
+                </div>
+              </td>
+              <td className="contact-cell">{vendor.contact_person || "-"}</td>
+              <td className="phone-cell">{vendor.phone_number || "-"}</td>
+              <td className="email-cell">{vendor.email_address || "-"}</td>
+              <td className="city-cell">{vendor.city || "-"}</td>
+              <td className="state-cell">{vendor.state || "-"}</td>
+              <td className="gst-cell">
+                {vendor.gst_number ? (
+                  <span className="gst-badge">GST</span>
+                ) : (
+                  "-"
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

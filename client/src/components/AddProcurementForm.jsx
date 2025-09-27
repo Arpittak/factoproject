@@ -74,7 +74,7 @@ function AddProcurementForm({ onProcurementAdded, onCancel }) {
           axios.get("/api/master/edges"),
           axios.get("/api/master/finishes"),
         ]);
-        setVendors(v.data);
+        setVendors(v.data.vendors || v.data || []);
         setAllStones(s.data);
         setHsnCodes(h.data);
         setStages(st.data);

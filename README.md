@@ -87,7 +87,9 @@ Note: To run code in MySQL Workbench: Click on MySQL root connection → Enter p
 Open MySQL Workbench and connect to the root connection.
 Create a new database in the terminal:
 sql:  CREATE DATABASE factodb;
-sql2: Open the schema.sql file from the repository, copy all its code, and run it inside MySQL Workbench following the note above.
+aq2:  USE factodb;
+
+sql3: Open the schema.sql file from the repository, copy all its code, and run it inside MySQL Workbench following the note above.
 
 note again: if you got an error then run sql2
 
