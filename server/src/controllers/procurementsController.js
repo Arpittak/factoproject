@@ -180,7 +180,7 @@ exports.createProcurement = async (req, res) => {
   (procurement_id, stone_id, hsn_code_id, length_mm, width_mm, thickness_mm, 
    is_calibrated, edges_type_id, finishing_type_id, stage_id,
    quantity, units, rate, rate_unit, item_amount, comments, inventory_item_id, created_at)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `;
 
       await connection.query(procItemSql, [
@@ -200,7 +200,8 @@ exports.createProcurement = async (req, res) => {
         item.rate_unit,
         calculatedItemAmount,
         item.comments || null,
-        inventoryItemId  // LINK TO INVENTORY
+        inventoryItemId,  // LINK TO INVENTORY
+        invoice_date
       ]);
 
       // Calculate quantities using corrected logic

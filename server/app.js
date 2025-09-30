@@ -12,7 +12,18 @@ const procurementRoutes = require('./src/routes/procurements');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow localhost and ngrok domains
+    if (!origin || origin.includes('localhost') || origin.includes('ngrok.io')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // A simple test route
