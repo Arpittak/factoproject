@@ -1,14 +1,14 @@
 const express = require('express');
-const router = express.Router();
-const procurementsController = require('../controllers/procurementsController');
+const ProcurementsController = require('../controllers/procurementsController');
 
-// IMPORTANT: Put analytics route BEFORE the generic GET route
-// Put analytics route BEFORE the generic route
-router.delete('/items/:procurementItemId', procurementsController.deleteProcurementItem);
-router.post('/:procurementId/items', procurementsController.addProcurementItem);
-router.get('/analytics', procurementsController.getProcurementAnalytics);
-router.get('/:id', procurementsController.getProcurementById);  // ADD THIS LINE
-router.get('/', procurementsController.getAllProcurements);
-router.post('/', procurementsController.createProcurement);
+const router = express.Router();
+
+// IMPORTANT: Put specific routes BEFORE parameterized routes
+router.delete('/items/:procurementItemId', ProcurementsController.deleteProcurementItem);
+router.post('/:procurementId/items', ProcurementsController.addProcurementItem);
+router.get('/analytics', ProcurementsController.getProcurementAnalytics);
+router.get('/:id', ProcurementsController.getProcurementById);
+router.get('/', ProcurementsController.getAllProcurements);
+router.post('/', ProcurementsController.createProcurement);
 
 module.exports = router;

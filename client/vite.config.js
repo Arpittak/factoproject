@@ -14,7 +14,7 @@ export default defineConfig({
     },
     // Add allowedHosts here, directly under the 'server' object
     allowedHosts: [
-      '58ec4d9134c3.ngrok-free.app', // Replace with your current ngrok URL
+      '4e6ab24fe94d.ngrok-free.app', // Replace with your current ngrok URL
       'localhost',
       '127.0.0.1',
     ],

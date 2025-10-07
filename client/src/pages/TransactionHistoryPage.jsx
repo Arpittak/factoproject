@@ -2,40 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TransactionFilters from '../components/TransactionFilters';
 // --- Reusable styles for this page ---
+import './TransactionHistoryPage.css';
 
-// Replace pageHeaderStyle
-const pageHeaderStyle = { 
-  display: 'flex', 
-  flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-  justifyContent: 'space-between', 
-  alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
-  marginBottom: '20px',
-  gap: window.innerWidth <= 768 ? '10px' : '0'
-};
-
-// Replace detailsBoxStyle  
-const detailsBoxStyle = { 
-  border: '1px solid #eee', 
-  padding: '20px', 
-  borderRadius: '8px', 
-  display: 'grid',
-  gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(4, 1fr)',
-  gap: window.innerWidth <= 768 ? '16px' : '20px',
-  backgroundColor: '#fff', 
-  marginBottom: '20px' 
-};
-
-// Update detailItemStyle
-const detailItemStyle = { 
-  textAlign: window.innerWidth <= 768 ? 'left' : 'center',
-  padding: window.innerWidth <= 768 ? '12px' : '0',
-  borderBottom: window.innerWidth <= 768 ? '1px solid #eee' : 'none'
-};
-const backButtonStyle = { padding: '8px 15px', cursor: 'pointer', border: '1px solid #ccc', background: '#fff', borderRadius: '5px' };
-
-const tableStyle = { width: '100%', borderCollapse: 'collapse', marginTop: '20px' };
-const thStyle = { padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f8f9fa' };
-const tdStyle = { padding: '10px', borderBottom: '1px solid #ddd', verticalAlign: 'top' };
 
 function TransactionHistoryPage({ itemId, onBack }) {
   const [itemDetails, setItemDetails] = useState(null);
@@ -153,130 +121,170 @@ function TransactionHistoryPage({ itemId, onBack }) {
   if (error) return <p>{error}</p>;
   if (!itemDetails) return <p>Item not found.</p>;
 
-  return (
-    <div>
-      
-      <div style={pageHeaderStyle}>
-        <div>
-          <button style={backButtonStyle} onClick={onBack}>&larr; Back</button>
-          <h2 style={{ display: 'inline-block', marginLeft: '20px' }}>Transaction History</h2>
-          <p style={{ color: '#555', margin: '0 0 0 22px' }}>{itemDetails.stone_type} - {itemDetails.stone_name}</p>
-        </div>
-      </div>
-
-      {/* --- Item Details Box --- */}
-      <div style={detailsBoxStyle}>
-        <div style={detailItemStyle}>
-            <strong>Dimensions</strong>
-            <p>{`${itemDetails.length_mm} x ${itemDetails.width_mm} x ${itemDetails.thickness_mm || 'N/A'} mm`}</p>
-        </div>
-        <div style={detailItemStyle}>
-            <strong>Stage</strong>
-            <p>{itemDetails.stage}</p>
-        </div>
-        <div style={detailItemStyle}>
-            <strong>Current Quantity</strong>
-            <p>
-                <strong>{history.length > 0 ? `${history[0].balance_after_pieces} Pieces` : '0 Pieces'}</strong><br/>
-                <small>{history.length > 0 ? `${parseFloat(history[0].balance_after_sq_meter).toFixed(2)} Sq Meter` : '0.00 Sq Meter'}</small>
-            </p>
-        </div>
-         <div style={detailItemStyle}>
-            <strong>Total Transactions</strong>
-            <p>{history.length}</p>
-        </div>
-      </div>
-
-      <TransactionFilters onFilterChange={handleFilterChange} />
-
-      {/* --- Transaction History Table --- */}
-      <div style={{
-        overflowX: 'auto',
-        border: '1px solid #eee',
-        borderRadius: '8px',
-        backgroundColor: '#fff'
-      }}>
-        <table style={{
-          ...tableStyle,
-          minWidth: '800px' // Back to original width
-        }}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Date & Time</th>
-              <th style={thStyle}>Quantity (in/out)</th>
-              <th style={thStyle}>Change (Pieces/Sq Meter)</th>
-              <th style={thStyle}>Balance After</th>
-              <th style={thStyle}>Reason</th>
-              <th style={thStyle}>Performed By</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredHistory.map((tx) => (
-              <tr key={tx.id}>
-                <td style={tdStyle}>{new Date(tx.created_at).toLocaleString()}</td>
-                <td style={tdStyle}>
-                  <span style={{ 
-                    color: tx.change_in_pieces > 0 ? '#28a745' : '#dc3545', 
-                    backgroundColor: tx.change_in_pieces > 0 ? '#e9f7eb' : '#fbe9eb',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontWeight: 'bold' 
-                  }}>
-                    {tx.change_in_pieces > 0 ? `+${tx.change_in_pieces}` : tx.change_in_pieces} Pieces
-                  </span>
-                </td>
-                <td style={tdStyle}>
-                  <strong>{Math.abs(tx.change_in_pieces)} Pieces</strong><br/>
-                  <small>{parseFloat(Math.abs(tx.change_in_sq_meter)).toFixed(2)} Sq Meter</small>
-                </td>
-                <td style={tdStyle}>
-                  <strong>{tx.balance_after_pieces} Pieces</strong><br/>
-                  <small>{parseFloat(tx.balance_after_sq_meter).toFixed(2)} Sq Meter</small>
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ fontSize: '13px' }}>
-                    {/* Transaction Type - Simple Text Only */}
-                    <div style={{ 
-                      fontWeight: 'bold', 
-                      color: '#333',
-                      marginBottom: '6px'
-                    }}>
-                      {formatTransactionType(tx.transaction_type)}
-                    </div>
-                    
-                    {/* System Comment Label - Only show if there's reason or source_details */}
-                    {(tx.reason || tx.source_details) && (
-                      <div style={{ 
-                        fontSize: '11px', 
-                        color: '#666', 
-                        fontWeight: '500',
-                        marginBottom: '4px'
-                      }}>
-                        System Comment
-                      </div>
-                    )}
-                    
-                    {/* Source/Reason Data */}
-                    {tx.reason && (
-                      <div style={{ marginBottom: '2px', color: '#333' }}>
-                        {tx.reason}
-                      </div>
-                    )}
-                    {tx.source_details && (
-                      <div style={{ color: '#666' }}>
-                        {tx.source_details}
-                      </div>
-                    )}
-                  </div>
-                </td>
-                <td style={tdStyle}>{tx.performed_by}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+ return (
+  <div>
+    {/* Page Header - use className instead of inline style */}
+    <div className="transaction-page-header">
+      <div>
+        <button className="btn-secondary back-button" onClick={onBack}>
+          ← Back
+        </button>
+        <h2 style={{ display: 'inline-block', marginLeft: '20px' }}>
+          Transaction History
+        </h2>
+        <p style={{ color: '#6b7280', margin: '0 0 0 22px' }}>
+          {itemDetails.stone_type} - {itemDetails.stone_name}
+        </p>
       </div>
     </div>
-  );
-}
 
+    {/* Item Details Box - use className */}
+    <div className="transaction-details-box">
+      <div className="transaction-detail-item">
+        <strong>Dimensions</strong>
+        <p>{`${itemDetails.length_mm} × ${itemDetails.width_mm} × ${itemDetails.thickness_mm || 'N/A'} mm`}</p>
+      </div>
+      <div className="transaction-detail-item">
+        <strong>Stage</strong>
+        <p>{itemDetails.stage}</p>
+      </div>
+      <div className="transaction-detail-item">
+        <strong>Current Quantity</strong>
+        <p>
+          <strong>{history.length > 0 ? `${parseFloat(history[0].balance_after_sq_meter).toFixed(2)} Sq Meter` : '0.00 Sq Meter'}</strong><br/>
+          <small>{history.length > 0 ? `${history[0].balance_after_pieces} Pieces` : '0 Pieces'}</small>
+        </p>
+      </div>
+      <div className="transaction-detail-item">
+        <strong>Total Transactions</strong>
+        <p>{history.length}</p>
+      </div>
+    </div>
+
+    <TransactionFilters onFilterChange={handleFilterChange} />
+
+    {/* Desktop Table View */}
+    <div className="transaction-table-container desktop-view">
+      <table className="transaction-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Quantity (in/out)</th>
+            <th>Change (Pieces/Sq Meter)</th>
+            <th>Balance After</th>
+            <th>Reason</th>
+            <th>Performed By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredHistory.map((tx) => (
+            <tr key={tx.id}>
+              <td>{new Date(tx.created_at).toLocaleString()}</td>
+              <td>
+                <span style={{ 
+                  color: tx.change_in_pieces > 0 ? '#28a745' : '#dc3545', 
+                  backgroundColor: tx.change_in_pieces > 0 ? '#e9f7eb' : '#fbe9eb',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold' 
+                }}>
+                  {tx.change_in_pieces > 0 ? `+${tx.change_in_pieces}` : tx.change_in_pieces} Pieces
+                </span>
+              </td>
+              <td>
+                <strong>{Math.abs(tx.change_in_pieces)} Pieces</strong><br/>
+                <small>{parseFloat(Math.abs(tx.change_in_sq_meter)).toFixed(2)} Sq Meter</small>
+              </td>
+              <td>
+                <strong>{tx.balance_after_pieces} Pieces</strong><br/>
+                <small>{parseFloat(tx.balance_after_sq_meter).toFixed(2)} Sq Meter</small>
+              </td>
+              <td>
+                <div style={{ fontSize: '13px' }}>
+                  <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '6px' }}>
+                    {formatTransactionType(tx.transaction_type)}
+                  </div>
+                  {(tx.reason || tx.source_details) && (
+                    <div style={{ fontSize: '11px', color: '#666', fontWeight: '500', marginBottom: '4px' }}>
+                      System Comment
+                    </div>
+                  )}
+                  {tx.reason && (
+                    <div style={{ marginBottom: '2px', color: '#333' }}>
+                      {tx.reason}
+                    </div>
+                  )}
+                  {tx.source_details && (
+                    <div style={{ color: '#666' }}>
+                      {tx.source_details}
+                    </div>
+                  )}
+                </div>
+              </td>
+              <td>{tx.performed_by}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Mobile Card View - NEW ADDITION */}
+    <div className="transaction-cards-container mobile-view">
+      {filteredHistory.map((tx) => (
+        <div key={tx.id} className="transaction-card">
+          <div className="transaction-card-header">
+            <div className="transaction-card-date">
+              {new Date(tx.created_at).toLocaleString()}
+            </div>
+            <span style={{ 
+              color: tx.change_in_pieces > 0 ? '#28a745' : '#dc3545', 
+              backgroundColor: tx.change_in_pieces > 0 ? '#e9f7eb' : '#fbe9eb',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+              fontSize: '12px'
+            }}>
+              {tx.change_in_pieces > 0 ? `+${tx.change_in_pieces}` : tx.change_in_pieces} Pieces
+            </span>
+          </div>
+          <div className="transaction-card-details">
+            <div className="transaction-detail-row">
+              <span className="transaction-detail-label">Type:</span>
+              <span className="transaction-detail-value">
+                {formatTransactionType(tx.transaction_type)}
+              </span>
+            </div>
+            <div className="transaction-detail-row">
+              <span className="transaction-detail-label">Change:</span>
+              <span className="transaction-detail-value">
+                {Math.abs(tx.change_in_pieces)} Pieces / {parseFloat(Math.abs(tx.change_in_sq_meter)).toFixed(2)} Sq M
+              </span>
+            </div>
+            <div className="transaction-detail-row">
+              <span className="transaction-detail-label">Balance After:</span>
+              <span className="transaction-detail-value">
+                {tx.balance_after_pieces} Pieces / {parseFloat(tx.balance_after_sq_meter).toFixed(2)} Sq M
+              </span>
+            </div>
+            {(tx.reason || tx.source_details) && (
+              <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #eee' }}>
+                <div style={{ fontSize: '11px', color: '#666', fontWeight: '500', marginBottom: '4px' }}>
+                  System Comment
+                </div>
+                <div style={{ fontSize: '12px', color: '#333' }}>
+                  {tx.reason || tx.source_details}
+                </div>
+              </div>
+            )}
+            <div className="transaction-detail-row" style={{ marginTop: '8px' }}>
+              <span className="transaction-detail-label">Performed By:</span>
+              <span className="transaction-detail-value">{tx.performed_by}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+}
 export default TransactionHistoryPage;

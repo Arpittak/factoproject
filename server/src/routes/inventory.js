@@ -1,13 +1,14 @@
 const express = require('express');
+const InventoryController = require('../controllers/inventoryController');
+
 const router = express.Router();
-const inventoryController = require('../controllers/inventoryController');
 
 // IMPORTANT: Put specific routes BEFORE parameterized routes
-router.get('/analytics', inventoryController.getInventoryAnalytics);
-router.get('/', inventoryController.getAllInventoryItems);
-router.post('/manual-add', inventoryController.manualAddTransaction);
-router.post('/manual-adjust', inventoryController.manualAdjustTransaction);
-router.get('/:id/transactions', inventoryController.getTransactionsForItem); 
-router.delete('/:id', inventoryController.deleteInventoryItem);
+router.get('/analytics', InventoryController.getInventoryAnalytics);
+router.get('/', InventoryController.getAllInventoryItems);
+router.post('/manual-add', InventoryController.manualAddTransaction);
+router.post('/manual-adjust', InventoryController.manualAdjustTransaction);
+router.get('/:id/transactions', InventoryController.getTransactionsForItem); 
+router.delete('/:id', InventoryController.deleteInventoryItem);
 
 module.exports = router;

@@ -1,24 +1,17 @@
 const express = require('express');
+const VendorsController = require('../controllers/vendorsController');
+
 const router = express.Router();
-const {
-  createVendor,
-  getAllVendors,
-  getVendorById,
-  updateVendor,
-  checkCompanyNameAvailability,
-  checkGstAvailability,
-  getVendorAnalytics  // Add this import
-} = require('../controllers/vendorsController');
 
 // Static routes FIRST (most specific)
-router.get('/analytics', getVendorAnalytics);
-router.get('/check-company-name/:name', checkCompanyNameAvailability);
-router.get('/check-gst/:gst', checkGstAvailability);
+router.get('/analytics', VendorsController.getVendorAnalytics);
+router.get('/check-company-name/:name', VendorsController.checkCompanyNameAvailability);
+router.get('/check-gst/:gst', VendorsController.checkGstAvailability);
 
 // Dynamic routes LAST (less specific)
-router.post('/', createVendor);
-router.get('/', getAllVendors);
-router.get('/:id', getVendorById);
-router.put('/:id', updateVendor);
+router.post('/', VendorsController.createVendor);
+router.get('/', VendorsController.getAllVendors);
+router.get('/:id', VendorsController.getVendorById);
+router.put('/:id', VendorsController.updateVendor);
 
 module.exports = router;

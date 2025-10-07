@@ -1,11 +1,12 @@
 const express = require('express');
-const router = express.Router();
-const masterDataController = require('../controllers/masterDataController');
+const MasterDataController = require('../controllers/masterDataController');
 
-router.get('/stones', masterDataController.getAllStones);
-router.get('/stages', masterDataController.getAllStages);
-router.get('/edges', masterDataController.getAllEdgeTypes);
-router.get('/finishes', masterDataController.getAllFinishingTypes);
-router.get('/hsn-codes', masterDataController.getAllHsnCodes);
+const router = express.Router();
+
+router.get('/stones', MasterDataController.getAllStones);
+router.get('/stages', MasterDataController.getAllStages);
+router.get('/edges', MasterDataController.getAllEdgeTypes);
+router.get('/finishes', MasterDataController.getAllFinishingTypes);
+router.get('/hsn-codes', MasterDataController.getAllHsnCodes);
 
 module.exports = router;
