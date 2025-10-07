@@ -86,15 +86,16 @@ class Procurement {
 
       // Data query
       const dataSql = `
-        SELECT p.*, v.company_name as vendor_name,
-          (SELECT COUNT(*) FROM procurement_items pi WHERE pi.procurement_id = p.id) AS total_items
-        FROM procurements p
-        JOIN vendors v ON p.vendor_id = v.id
-        ${whereString}
-        ORDER BY p.updated_at DESC
-        LIMIT ? OFFSET ?;
-      `;
-      const [rows] = await db.execute(dataSql, [...params, parseInt(limit), parseInt(offset)]);
+  SELECT p.*, v.company_name as vendor_name,
+    (SELECT COUNT(*) FROM procurement_items pi WHERE pi.procurement_id = p.id) AS total_items
+  FROM procurements p
+  JOIN vendors v ON p.vendor_id = v.id
+  ${whereString}
+  ORDER BY p.updated_at DESC
+  LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
+`;
+
+const [rows] = await db.execute(dataSql, params);
 
       return {
         procurements: rows.map(row => new Procurement(row)),

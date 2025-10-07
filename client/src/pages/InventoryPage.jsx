@@ -3,11 +3,11 @@ import axios from 'axios';
 import Modal from 'react-modal';
 
 // Import all components for this page
-import InventoryList from '../components/InventoryList';
-import ManualAddForm from '../components/ManualAddForm';
-import AdjustQuantityForm from '../components/AdjustQuantityForm';
+import InventoryList from '../components/Inventory/InventoryList';
+import ManualAddForm from '../components/Inventory/ManualAddForm';
+import AdjustQuantityForm from '../components/Inventory/AdjustQuantityForm';
 import TransactionHistoryPage from './TransactionHistoryPage';
-import InventoryFilters from '../components/InventoryFilters';
+import InventoryFilters from '../components/Inventory/InventoryFilters';
 import Pagination from '../components/Pagination';
 import DashboardBox from '../components/DashboardBox';
 
@@ -156,8 +156,8 @@ function InventoryPage() {
                 <div className="dashboard-box">
                     <div className="box-content">
                         <p className="box-title">Total Quantity</p>
-                        <h3 className="box-value">{parseFloat(analytics.totalQuantity.sqMeter).toFixed(2)} Sq Meter</h3>
-                        <h3 className="box-value">{analytics.totalQuantity.pieces} Pieces</h3>
+                        <h3 className="box-value">{parseFloat(analytics.totalQuantity?.sqMeter || 0).toFixed(2)} Sq Meter</h3>
+                        <h3 className="box-value">{analytics.totalQuantity?.pieces || 0} Pieces</h3>
                     </div>
                 </div>
               </>

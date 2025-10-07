@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import TransactionFilters from '../components/TransactionFilters';
+import TransactionFilters from '../components/Inventory/TransactionFilters';
 // --- Reusable styles for this page ---
 import './TransactionHistoryPage.css';
 

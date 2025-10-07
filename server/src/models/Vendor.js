@@ -70,15 +70,15 @@ class Vendor {
       const totalItems = countResult[0].total;
 
       // Get paginated vendors
-      const sql = `
-        SELECT 
-          id, company_name, contact_person, phone_number, email_address,
-          city, state, state_code, gst_number, created_at, updated_at
-        FROM vendors 
-        ORDER BY created_at DESC
-        LIMIT ? OFFSET ?
-      `;
-      const [rows] = await db.execute(sql, [parseInt(limit), parseInt(offset)]);
+    const sql = `
+  SELECT 
+    id, company_name, contact_person, phone_number, email_address,
+    city, state, state_code, gst_number, created_at, updated_at
+  FROM vendors 
+  ORDER BY created_at DESC
+  LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
+`;
+const [rows] = await db.execute(sql);;
       
       return {
         vendors: rows.map(row => new Vendor(row)),
@@ -110,7 +110,36 @@ class Vendor {
       throw new DatabaseError(`Failed to fetch vendor: ${error.message}`);
     }
   }
-
+// Add after the findById method
+static async getVendorsList(search = '') {
+  try {
+    let sql = `
+      SELECT 
+        id, 
+        company_name, 
+        contact_person,
+        city, 
+        state,
+        phone_number,
+        email_address
+      FROM vendors
+    `;
+    const params = [];
+    
+    if (search && search.trim() !== '') {
+      sql += ' WHERE company_name LIKE ? OR contact_person LIKE ? OR city LIKE ?';
+      const searchPattern = `%${search.trim()}%`;
+      params.push(searchPattern, searchPattern, searchPattern);
+    }
+    
+    sql += ' ORDER BY company_name ASC';
+    
+    const [rows] = await db.execute(sql, params);
+    return rows;
+  } catch (error) {
+    throw new DatabaseError(`Failed to fetch vendors list: ${error.message}`);
+  }
+}
   static async create(vendorData) {
     try {
       // Validate

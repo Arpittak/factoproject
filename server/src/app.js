@@ -8,7 +8,9 @@ const inventoryRoutes = require('./routes/inventory');
 const masterDataRoutes = require('./routes/masterData'); 
 const procurementRoutes = require('./routes/procurements');
 const vendorProcurementRoutes = require('./routes/vendorProcurementRoutes');
-const { CustomError } = require('./utils/errors');
+
+// Import middleware
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -27,7 +29,7 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -43,42 +45,27 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Facto Clone API is running',
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
   });
 });
 
-// Use the routes
+// API Routes
 app.use('/api/vendors', vendorRoutes); 
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/master', masterDataRoutes);
 app.use('/api/procurements', procurementRoutes);
 app.use('/api/vendor-procurement', vendorProcurementRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-
-  // Handle custom errors
-  if (err instanceof CustomError) {
-    return res.status(err.statusCode).json({
-      success: false,
-      error: err.message
-    });
-  }
-
-  // Handle CORS errors
-  if (err.message === 'Not allowed by CORS') {
-    return res.status(403).json({
-      success: false,
-      error: 'CORS policy: Origin not allowed'
-    });
-  }
-
-  // Handle other errors
-  res.status(500).json({
+// 404 Handler - Must be after all routes
+app.use((req, res) => {
+  res.status(404).json({
     success: false,
-    error: 'Internal server error'
+    error: `Cannot ${req.method} ${req.path}`
   });
 });
+
+// Global Error Handler - Must be last
+app.use(errorHandler);
 
 module.exports = app;
