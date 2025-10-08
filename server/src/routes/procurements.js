@@ -1,5 +1,6 @@
 const express = require('express');
 const ProcurementsController = require('../controllers/procurementsController');
+const { validateProcurement } = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -9,6 +10,6 @@ router.post('/:procurementId/items', ProcurementsController.addProcurementItem);
 router.get('/analytics', ProcurementsController.getProcurementAnalytics);
 router.get('/:id', ProcurementsController.getProcurementById);
 router.get('/', ProcurementsController.getAllProcurements);
-router.post('/', ProcurementsController.createProcurement);
+router.post('/', validateProcurement, ProcurementsController.createProcurement);
 
 module.exports = router;

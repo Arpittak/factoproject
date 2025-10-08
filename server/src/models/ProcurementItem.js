@@ -63,6 +63,152 @@ class ProcurementItem {
     }
   }
 
+
+  // Add after the findByProcurementId method
+
+/**
+ * Find procurement items by vendor ID with filters and pagination
+ */
+static async findByVendorId(vendorId, filters = {}, pagination = { page: 1, limit: 10 }) {
+  try {
+    const { startDate, endDate, stoneType, stoneName } = filters;
+    const { page, limit } = pagination;
+    const offset = (page - 1) * limit;
+
+    let whereClauses = ['p.vendor_id = ?'];
+    let params = [vendorId];
+
+    // Date filters
+    if (startDate) {
+      whereClauses.push('pi.created_at >= ?');
+      params.push(startDate);
+    }
+    if (endDate) {
+      whereClauses.push('pi.created_at <= ?');
+      params.push(endDate);
+    }
+
+    // Stone filters
+    if (stoneType) {
+      whereClauses.push('s.stone_type = ?');
+      params.push(stoneType);
+    }
+    if (stoneName) {
+      whereClauses.push('s.stone_name LIKE ?');
+      params.push(`%${stoneName}%`);
+    }
+
+    const whereString = `WHERE ${whereClauses.join(' AND ')}`;
+
+    // Count total items
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM procurement_items pi
+      JOIN procurements p ON pi.procurement_id = p.id
+      JOIN stones s ON pi.stone_id = s.id
+      ${whereString}
+    `;
+    const [countRows] = await db.execute(countSql, params);
+    const totalItems = countRows[0].total;
+
+    // Fetch paginated items
+    const itemsSql = `
+      SELECT 
+        pi.*,
+        s.stone_name as stoneName,
+        s.stone_type as stoneType,
+        st.name as stageName,
+        et.name as edgesTypeName,
+        ft.name as finishingTypeName,
+        hc.code as hsnCode,
+        p.supplier_invoice,
+        p.invoice_date,
+        p.tax_percentage as taxPercentage
+      FROM procurement_items pi
+      JOIN procurements p ON pi.procurement_id = p.id
+      JOIN stones s ON pi.stone_id = s.id
+      LEFT JOIN stages st ON pi.stage_id = st.id
+      LEFT JOIN edges_types et ON pi.edges_type_id = et.id
+      LEFT JOIN finishing_types ft ON pi.finishing_type_id = ft.id
+      LEFT JOIN hsn_codes hc ON pi.hsn_code_id = hc.id
+      ${whereString}
+      ORDER BY pi.created_at DESC
+      LIMIT ? OFFSET ?
+    `;
+
+    const [rows] = await db.execute(itemsSql, [...params, parseInt(limit), parseInt(offset)]);
+
+    return {
+      items: rows.map(row => new ProcurementItem(row)),
+      pagination: {
+        currentPage: parseInt(page),
+        itemsPerPage: parseInt(limit),
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit)
+      }
+    };
+  } catch (error) {
+    throw new DatabaseError(`Failed to fetch vendor procurement items: ${error.message}`);
+  }
+}
+
+/**
+ * Get procurement statistics by vendor ID
+ */
+static async getStatsByVendorId(vendorId, filters = {}) {
+  try {
+    const { startDate, endDate, stoneType, stoneName } = filters;
+
+    let whereClauses = ['p.vendor_id = ?'];
+    let params = [vendorId];
+
+    // Date filters
+    if (startDate) {
+      whereClauses.push('pi.created_at >= ?');
+      params.push(startDate);
+    }
+    if (endDate) {
+      whereClauses.push('pi.created_at <= ?');
+      params.push(endDate);
+    }
+
+    // Stone filters
+    if (stoneType) {
+      whereClauses.push('s.stone_type = ?');
+      params.push(stoneType);
+    }
+    if (stoneName) {
+      whereClauses.push('s.stone_name LIKE ?');
+      params.push(`%${stoneName}%`);
+    }
+
+    const whereString = `WHERE ${whereClauses.join(' AND ')}`;
+
+    const statsSql = `
+      SELECT 
+        COUNT(pi.id) as total_items,
+        SUM(pi.quantity) as total_quantity,
+        SUM(pi.item_amount) as total_amount,
+        AVG(p.tax_percentage) as avg_tax_percentage
+      FROM procurement_items pi
+      JOIN procurements p ON pi.procurement_id = p.id
+      JOIN stones s ON pi.stone_id = s.id
+      ${whereString}
+    `;
+
+    const [rows] = await db.execute(statsSql, params);
+
+    return {
+      totalItems: parseInt(rows[0].total_items) || 0,
+      totalQuantity: parseFloat(rows[0].total_quantity) || 0,
+      totalAmount: parseFloat(rows[0].total_amount) || 0,
+      avgTaxPercentage: parseFloat(rows[0].avg_tax_percentage) || 0
+    };
+  } catch (error) {
+    throw new DatabaseError(`Failed to fetch vendor procurement stats: ${error.message}`);
+  }
+}
+
   // Create procurement item with inventory update
   static async create(procurementId, itemData, invoiceDate) {
     const connection = await db.getConnection();

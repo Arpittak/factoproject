@@ -82,24 +82,24 @@ class InventoryItem {
 
       // Data query
       const dataSql = `
-        SELECT
-          ii.id, ii.length_mm, ii.width_mm, ii.thickness_mm, ii.is_calibrated, ii.source,
-          s.stone_name, s.stone_type,
-          st.name AS stage, et.name AS edges_type, ft.name AS finishing_type,
-          COALESCE((SELECT SUM(it.change_in_pieces) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id), 0) AS quantity_pieces,
-          COALESCE((SELECT SUM(it.change_in_sq_meter) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id), 0) AS quantity_sq_meter,
-          (SELECT MAX(it.created_at) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id) as last_activity_date
-        FROM inventory_items ii
-        JOIN stones s ON ii.stone_id = s.id
-        LEFT JOIN stages st ON ii.stage_id = st.id
-        LEFT JOIN edges_types et ON ii.edges_type_id = et.id
-        LEFT JOIN finishing_types ft ON ii.finishing_type_id = ft.id
-        ${whereString}
-        ORDER BY last_activity_date DESC
-        LIMIT ?
-        OFFSET ?;
-      `;
-      const [rows] = await db.execute(dataSql, [...params, parseInt(limit), parseInt(offset)]);
+  SELECT
+    ii.id, ii.length_mm, ii.width_mm, ii.thickness_mm, ii.is_calibrated, ii.source,
+    s.stone_name, s.stone_type,
+    st.name AS stage, et.name AS edges_type, ft.name AS finishing_type,
+    COALESCE((SELECT SUM(it.change_in_pieces) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id), 0) AS quantity_pieces,
+    COALESCE((SELECT SUM(it.change_in_sq_meter) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id), 0) AS quantity_sq_meter,
+    (SELECT MAX(it.created_at) FROM inventory_transactions it WHERE it.inventory_item_id = ii.id) as last_activity_date
+  FROM inventory_items ii
+  JOIN stones s ON ii.stone_id = s.id
+  LEFT JOIN stages st ON ii.stage_id = st.id
+  LEFT JOIN edges_types et ON ii.edges_type_id = et.id
+  LEFT JOIN finishing_types ft ON ii.finishing_type_id = ft.id
+  ${whereString}
+  ORDER BY last_activity_date DESC
+  LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
+`;
+
+const [rows] = await db.execute(dataSql, params);
 
       return {
         items: rows.map(row => new InventoryItem(row)),
