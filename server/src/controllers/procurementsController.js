@@ -26,7 +26,7 @@ class ProcurementsController {
 
     res.status(200).json({
       success: true,
-      data: result.procurements,
+      procurements: result.procurements,
       pagination: result.pagination,
       message: `Found ${result.pagination.totalItems} procurements`
     });
@@ -61,7 +61,7 @@ class ProcurementsController {
 
     res.status(200).json({
       success: true,
-      data: analytics,
+      ...analytics,
       message: 'Procurement analytics retrieved successfully'
     });
   });
@@ -78,20 +78,18 @@ class ProcurementsController {
     const currentItemsAmount = items.reduce((sum, item) => sum + parseFloat(item.itemAmount), 0);
 
     res.status(200).json({
-      success: true,
-      data: {
-        procurement,
-        items,
-        summary: {
-          totalItems: items.length,
-          totalProcurementAmount: parseFloat(procurement.grandTotal) - parseFloat(procurement.freightCharges || 0),
-          taxAmount: ((parseFloat(procurement.grandTotal) - parseFloat(procurement.freightCharges || 0)) * parseFloat(procurement.taxPercentage)) / 100,
-          grandTotal: parseFloat(procurement.grandTotal),
-          currentItemsTotal: currentItemsAmount
-        }
-      },
-      message: 'Procurement details retrieved successfully'
-    });
+  success: true,
+  procurement,
+  items,
+  summary: {
+    totalItems: items.length,
+    totalProcurementAmount: parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0),
+    taxAmount: ((parseFloat(procurement.grand_total) - parseFloat(procurement.freight_charges || 0)) * parseFloat(procurement.tax_percentage)) / 100,
+    grandTotal: parseFloat(procurement.grand_total),
+    currentItemsTotal: currentItemsAmount
+  },
+  message: 'Procurement details retrieved successfully'
+});
   });
 
   // @desc    Delete procurement item

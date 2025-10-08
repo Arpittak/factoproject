@@ -3,20 +3,20 @@ const { ValidationError, NotFoundError, DatabaseError, DuplicateError } = requir
 
 class Vendor {
   constructor(data) {
-    this.id = data.id;
-    this.companyName = data.company_name;
-    this.contactPerson = data.contact_person;
-    this.phoneNumber = data.phone_number;
-    this.emailAddress = data.email_address;
-    this.city = data.city;
-    this.state = data.state;
-    this.stateCode = data.state_code;
-    this.completeAddress = data.complete_address;
-    this.gstNumber = data.gst_number;
-    this.bankDetails = data.bank_details;
-    this.createdAt = data.created_at;
-    this.updatedAt = data.updated_at;
-  }
+  this.id = data.id;
+  this.company_name = data.company_name;
+  this.contact_person = data.contact_person;
+  this.phone_number = data.phone_number;
+  this.email_address = data.email_address;
+  this.city = data.city;
+  this.state = data.state;
+  this.state_code = data.state_code;
+  this.complete_address = data.complete_address;
+  this.gst_number = data.gst_number;
+  this.bank_details = data.bank_details;
+  this.created_at = data.created_at;
+  this.updated_at = data.updated_at;
+}
 
   // Validation methods
   static validateCompanyName(companyName) {

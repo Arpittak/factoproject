@@ -2,12 +2,11 @@ const db = require('../config/db');
 const { DatabaseError } = require('../utils/errors');
 
 class Stone {
-  constructor(data) {
-    this.id = data.id;
-    this.stoneName = data.stone_name;
-    this.stoneType = data.stone_type;
-  }
-
+ constructor(data) {
+  this.id = data.id;
+  this.stone_name = data.stone_name;
+  this.stone_type = data.stone_type;
+}
   static async findAll() {
     try {
       const [rows] = await db.execute(`

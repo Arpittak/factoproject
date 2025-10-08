@@ -5,34 +5,34 @@ const InventoryTransaction = require('./InventoryTransaction');
 
 class ProcurementItem {
   constructor(data) {
-    this.id = data.id;
-    this.procurementId = data.procurement_id;
-    this.stoneId = data.stone_id;
-    this.hsnCodeId = data.hsn_code_id;
-    this.lengthMm = data.length_mm;
-    this.widthMm = data.width_mm;
-    this.thicknessMm = data.thickness_mm;
-    this.isCalibrated = data.is_calibrated;
-    this.edgesTypeId = data.edges_type_id;
-    this.finishingTypeId = data.finishing_type_id;
-    this.stageId = data.stage_id;
-    this.quantity = data.quantity;
-    this.units = data.units;
-    this.rate = data.rate;
-    this.rateUnit = data.rate_unit;
-    this.itemAmount = data.item_amount;
-    this.comments = data.comments;
-    this.inventoryItemId = data.inventory_item_id;
-    this.createdAt = data.created_at;
-    
-    // Joined data
-    this.stoneName = data.stone_name;
-    this.stoneType = data.stone_type;
-    this.stageName = data.stage_name;
-    this.edgesTypeName = data.edges_type_name;
-    this.finishingTypeName = data.finishing_type_name;
-    this.hsnCode = data.hsn_code;
-  }
+  this.id = data.id;
+  this.procurement_id = data.procurement_id;
+  this.stone_id = data.stone_id;
+  this.hsn_code_id = data.hsn_code_id;
+  this.length_mm = data.length_mm;
+  this.width_mm = data.width_mm;
+  this.thickness_mm = data.thickness_mm;
+  this.is_calibrated = data.is_calibrated;
+  this.edges_type_id = data.edges_type_id;
+  this.finishing_type_id = data.finishing_type_id;
+  this.stage_id = data.stage_id;
+  this.quantity = data.quantity;
+  this.units = data.units;
+  this.rate = data.rate;
+  this.rate_unit = data.rate_unit;
+  this.item_amount = data.item_amount;
+  this.comments = data.comments;
+  this.inventory_item_id = data.inventory_item_id;
+  this.created_at = data.created_at;
+  
+  // Joined data
+  this.stone_name = data.stone_name;
+  this.stone_type = data.stone_type;
+  this.stage_name = data.stage_name;
+  this.edges_type_name = data.edges_type_name;
+  this.finishing_type_name = data.finishing_type_name;
+  this.hsn_code = data.hsn_code;
+}
 
   // Find all items for a procurement
   static async findByProcurementId(procurementId) {

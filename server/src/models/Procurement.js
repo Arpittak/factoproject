@@ -3,34 +3,34 @@ const { ValidationError, NotFoundError, DatabaseError } = require('../utils/erro
 
 class Procurement {
   constructor(data) {
-    this.id = data.id;
-    this.vendorId = data.vendor_id;
-    this.invoiceDate = data.invoice_date;
-    this.supplierInvoice = data.supplier_invoice;
-    this.vehicleNumber = data.vehicle_number;
-    this.gstType = data.gst_type;
-    this.taxPercentage = data.tax_percentage;
-    this.freightCharges = data.freight_charges;
-    this.additionalTaxableAmount = data.additional_taxable_amount;
-    this.grandTotal = data.grand_total;
-    this.comments = data.comments;
-    this.createdAt = data.created_at;
-    this.updatedAt = data.updated_at;
-    
-    // Joined data
-    this.vendorName = data.vendor_name;
-    this.companyName = data.company_name;
-    this.contactPerson = data.contact_person;
-    this.phoneNumber = data.phone_number;
-    this.emailAddress = data.email_address;
-    this.city = data.city;
-    this.state = data.state;
-    this.stateCode = data.state_code;
-    this.completeAddress = data.complete_address;
-    this.gstNumber = data.gst_number;
-    this.bankDetails = data.bank_details;
-    this.totalItems = data.total_items;
-  }
+  this.id = data.id;
+  this.vendor_id = data.vendor_id;
+  this.invoice_date = data.invoice_date;
+  this.supplier_invoice = data.supplier_invoice;
+  this.vehicle_number = data.vehicle_number;
+  this.gst_type = data.gst_type;
+  this.tax_percentage = data.tax_percentage;
+  this.freight_charges = data.freight_charges;
+  this.additional_taxable_amount = data.additional_taxable_amount;
+  this.grand_total = data.grand_total;
+  this.comments = data.comments;
+  this.created_at = data.created_at;
+  this.updated_at = data.updated_at;
+  
+  // Joined data
+  this.vendor_name = data.vendor_name;
+  this.company_name = data.company_name;
+  this.contact_person = data.contact_person;
+  this.phone_number = data.phone_number;
+  this.email_address = data.email_address;
+  this.city = data.city;
+  this.state = data.state;
+  this.state_code = data.state_code;
+  this.complete_address = data.complete_address;
+  this.gst_number = data.gst_number;
+  this.bank_details = data.bank_details;
+  this.total_items = data.total_items;
+}
 
   // Find all procurements with filters and pagination
   static async findAll(filters = {}, pagination = { page: 1, limit: 10 }) {

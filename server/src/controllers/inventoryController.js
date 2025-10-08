@@ -22,7 +22,7 @@ class InventoryController {
 
     res.status(200).json({
       success: true,
-      data: result.items,
+      items: result.items,
       pagination: result.pagination,
       message: `Found ${result.pagination.totalItems} inventory items`
     });
@@ -74,7 +74,8 @@ class InventoryController {
 
     res.status(200).json({
       success: true,
-      data: result,
+      item: result.item,      // Return item directly
+  history: result.history, // Return history directly  
       message: 'Transaction history retrieved successfully'
     });
   });
@@ -86,7 +87,7 @@ class InventoryController {
 
     res.status(200).json({
       success: true,
-      data: analytics,
+      ...analytics,
       message: 'Inventory analytics retrieved successfully'
     });
   });

@@ -14,7 +14,7 @@ class VendorProcurementController {
     
     res.json({
       success: true,
-      data: vendors,
+      vendors,
       message: `Found ${vendors.length} vendors`
     });
   });
@@ -31,7 +31,7 @@ class VendorProcurementController {
     
     res.json({
       success: true,
-      data: vendor,
+      ...vendor,
       message: 'Vendor details retrieved successfully'
     });
   });
@@ -70,21 +70,19 @@ class VendorProcurementController {
     ]);
     
     res.json({
-      success: true,
-      data: {
-        items: result.items,
-        stats,
-        pagination: result.pagination,
-        filters: {
-          vendorId,
-          startDate: startDate || null,
-          endDate: endDate || null,
-          stoneType: stoneType || null,
-          stoneName: stoneName || null
-        }
-      },
-      message: `Found ${result.pagination.totalItems} procurement items`
-    });
+  success: true,
+  items: result.items,
+  stats,
+  pagination: result.pagination,
+  filters: {
+    vendorId,
+    startDate: startDate || null,
+    endDate: endDate || null,
+    stoneType: stoneType || null,
+    stoneName: stoneName || null
+  },
+  message: `Found ${result.pagination.totalItems} procurement items`
+});
   });
 
   // GET /api/vendor-procurement/filter-options

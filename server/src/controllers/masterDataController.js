@@ -11,7 +11,7 @@ class MasterDataController {
     
     res.status(200).json({
       success: true,
-      data: stones,
+     stones: stones,
       message: `Found ${stones.length} stones`
     });
   });
@@ -23,7 +23,7 @@ class MasterDataController {
     
     res.status(200).json({
       success: true,
-      data: stages,
+      stages: stages,
       message: `Found ${stages.length} stages`
     });
   });
@@ -35,7 +35,7 @@ class MasterDataController {
     
     res.status(200).json({
       success: true,
-      data: edges,
+      edges: edges,
       message: `Found ${edges.length} edge types`
     });
   });
@@ -47,7 +47,7 @@ class MasterDataController {
     
     res.status(200).json({
       success: true,
-      data: finishes,
+      finishes: finishes,
       message: `Found ${finishes.length} finishing types`
     });
   });
@@ -59,7 +59,7 @@ class MasterDataController {
     
     res.status(200).json({
       success: true,
-      data: codes,
+      hsnCodes: codes,
       message: `Found ${codes.length} HSN codes`
     });
   });

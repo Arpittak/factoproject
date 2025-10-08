@@ -3,27 +3,28 @@ const { ValidationError, NotFoundError, DatabaseError } = require('../utils/erro
 
 class InventoryItem {
   constructor(data) {
-    this.id = data.id;
-    this.stoneId = data.stone_id;
-    this.lengthMm = data.length_mm;
-    this.widthMm = data.width_mm;
-    this.thicknessMm = data.thickness_mm;
-    this.isCalibrated = data.is_calibrated;
-    this.edgesTypeId = data.edges_type_id;
-    this.finishingTypeId = data.finishing_type_id;
-    this.stageId = data.stage_id;
-    this.source = data.source; // 'procurement' or 'manual'
-    
-    // Joined data
-    this.stoneName = data.stone_name;
-    this.stoneType = data.stone_type;
-    this.stage = data.stage;
-    this.edgesType = data.edges_type;
-    this.finishingType = data.finishing_type;
-    this.quantityPieces = data.quantity_pieces || 0;
-    this.quantitySqMeter = data.quantity_sq_meter || 0;
-    this.lastActivityDate = data.last_activity_date;
-  }
+  this.id = data.id;
+  this.stone_id = data.stone_id;
+  this.length_mm = data.length_mm;
+  this.width_mm = data.width_mm;
+  this.thickness_mm = data.thickness_mm;
+  this.is_calibrated = data.is_calibrated;
+  this.edges_type_id = data.edges_type_id;
+  this.finishing_type_id = data.finishing_type_id;
+  this.stage_id = data.stage_id;
+  this.source = data.source;
+  
+  // Joined data
+  this.stone_name = data.stone_name;
+  this.stone_type = data.stone_type;
+  this.stage = data.stage;
+  this.edges_type = data.edges_type;
+  this.finishing_type = data.finishing_type;
+  this.quantity_pieces = data.quantity_pieces || 0;
+  this.quantity_sq_meter = data.quantity_sq_meter || 0;
+  this.last_activity_date = data.last_activity_date;
+}
+
 
   // Helper: Calculate pieces from sq_meter (CEILING)
   static calculatePiecesFromSqMeter(sqMeter, lengthMm, widthMm) {

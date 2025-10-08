@@ -24,7 +24,7 @@ class VendorsController {
     
     res.status(200).json({
       success: true,
-      data: result.vendors,
+      vendors: result.vendors,
       pagination: result.pagination,
       message: `Found ${result.pagination.totalItems} vendors`
     });
@@ -39,7 +39,7 @@ class VendorsController {
     
     res.status(200).json({
       success: true,
-      data: vendor,
+      ...vendor,
       message: 'Vendor details retrieved successfully'
     });
   });
@@ -106,7 +106,7 @@ class VendorsController {
     
     res.json({
       success: true,
-      data: analytics,
+      ...analytics,
       message: 'Vendor analytics retrieved successfully'
     });
   });

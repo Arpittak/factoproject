@@ -4,18 +4,18 @@ const InventoryItem = require('./InventoryItem');
 
 class InventoryTransaction {
   constructor(data) {
-    this.id = data.id;
-    this.inventoryItemId = data.inventory_item_id;
-    this.transactionType = data.transaction_type;
-    this.changeInSqMeter = data.change_in_sq_meter;
-    this.changeInPieces = data.change_in_pieces;
-    this.balanceAfterSqMeter = data.balance_after_sq_meter;
-    this.balanceAfterPieces = data.balance_after_pieces;
-    this.reason = data.reason;
-    this.sourceDetails = data.source_details;
-    this.performedBy = data.performed_by;
-    this.createdAt = data.created_at;
-  }
+  this.id = data.id;
+  this.inventory_item_id = data.inventory_item_id;
+  this.transaction_type = data.transaction_type;
+  this.change_in_sq_meter = data.change_in_sq_meter;
+  this.change_in_pieces = data.change_in_pieces;
+  this.balance_after_sq_meter = data.balance_after_sq_meter;
+  this.balance_after_pieces = data.balance_after_pieces;
+  this.reason = data.reason;
+  this.source_details = data.source_details;
+  this.performed_by = data.performed_by;
+  this.created_at = data.created_at;
+}
 
   // Get last balance for an inventory item
   static async getLastBalance(inventoryItemId, connection = null) {
